@@ -9,5 +9,6 @@ namespace UniFilteringproject.Models
         public string Name { get; set; }
         public int Dapar { get; set; }
         public int Profile { get; set; }
+        public string ImageUrl { get; set; }
     }
 }
