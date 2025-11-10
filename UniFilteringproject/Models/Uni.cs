@@ -2,6 +2,8 @@
 {
     public class Uni
     {
+        public int Id { get; set; }
+
         public List<Haiils> ListOfHaiils { get; set; } = new();
     }
     public class Haiils

@@ -5,10 +5,10 @@
 foreach
  *@
 @{
-    ViewData["Title"] = "Product List";
+    ViewData["Title"] = "Malshab List";
 }
 
-<h2>Product List</h2>@* כותרת הדף *@
+<h2>Malshab List</h2>@* כותרת הדף *@
 
 <table class="table table-striped">
     @* כותרות העמודות *@
@@ -26,8 +26,8 @@ foreach
         {
             <tr>
                 <td>@malshab.Name</td>
-                <td>@malshab.Profile.ToString("C")</td>
-                <td>@malshab.Dapar.ToString("C")</td>
+                <td>@malshab.Profile.ToString()</td>
+                <td>@malshab.Dapar.ToString()</td>
                 <td>
                     @if (!string.IsNullOrEmpty(malshab.ImageUrl))
                     {
@@ -35,11 +35,11 @@ foreach
                     }
                 </td>
                 <td>
-                    <a class="btn btn-warning btn-sm" href="@Url.Action("EditPr", "Malshab", new { id = malshab.Id })">Edit</a>
+                    <a class="btn btn-warning btn-sm" href="@Url.Action("EditMS", "Malshab", new { id = malshab.Id })">Edit</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-<a class="btn btn-primary" href="@Url.Action("CreatePr", "Malshab")">Add New Product</a>
+<a class="btn btn-primary" href="@Url.Action("CreateMs", "Malshab")">Add New Malshab</a>

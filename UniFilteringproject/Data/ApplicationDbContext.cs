@@ -5,12 +5,13 @@ namespace UniFilteringproject.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public DbSet<Uni> Unis { get; set; }
-        public DbSet<Malshab> Malshabs { get; set; }
-        public DbSet<Haiil> haiils { get; set; }
+        public DbSet<Uni> TheUni { get; set; }
+        public DbSet<Malshab> TheMalshabs { get; set; }
+        public DbSet<Haiil> TheHaiils { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+
         }
 
         // Add DbSet<TEntity> properties here, for example:

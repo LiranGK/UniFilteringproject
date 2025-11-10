@@ -3,14 +3,13 @@
     public class Haiil
     {
         public int Id { get; set; }
-        public List<CartItem> items { get; set; } = new();
+        public List<AppointedMalshab> Malshabim { get; set; } = new();
         public bool IsFull { get; set; }
     }
-    public class CartItem
+    public class AppointedMalshab 
     {
-        public int MalshabId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-    }
 
+    }
 }
