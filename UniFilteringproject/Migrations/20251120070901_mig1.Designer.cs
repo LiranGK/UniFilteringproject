@@ -11,7 +11,7 @@ using UniFilteringproject.Data;
 namespace UniFilteringproject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251110122453_mig1")]
+    [Migration("20251120070901_mig1")]
     partial class mig1
     {
         /// <inheritdoc />
@@ -32,7 +32,7 @@ namespace UniFilteringproject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("HaiilId")
+                    b.Property<int?>("CorpId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -41,12 +41,12 @@ namespace UniFilteringproject.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HaiilId");
+                    b.HasIndex("CorpId");
 
                     b.ToTable("AppointedMalshab");
                 });
 
-            modelBuilder.Entity("UniFilteringproject.Models.Haiil", b =>
+            modelBuilder.Entity("UniFilteringproject.Models.Corp", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -59,7 +59,7 @@ namespace UniFilteringproject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TheHaiils");
+                    b.ToTable("TheCorps");
                 });
 
             modelBuilder.Entity("UniFilteringproject.Models.Haiils", b =>
@@ -130,9 +130,9 @@ namespace UniFilteringproject.Migrations
 
             modelBuilder.Entity("UniFilteringproject.Models.AppointedMalshab", b =>
                 {
-                    b.HasOne("UniFilteringproject.Models.Haiil", null)
+                    b.HasOne("UniFilteringproject.Models.Corp", null)
                         .WithMany("Malshabim")
-                        .HasForeignKey("HaiilId");
+                        .HasForeignKey("CorpId");
                 });
 
             modelBuilder.Entity("UniFilteringproject.Models.Haiils", b =>
@@ -142,7 +142,7 @@ namespace UniFilteringproject.Migrations
                         .HasForeignKey("UniId");
                 });
 
-            modelBuilder.Entity("UniFilteringproject.Models.Haiil", b =>
+            modelBuilder.Entity("UniFilteringproject.Models.Corp", b =>
                 {
                     b.Navigation("Malshabim");
                 });

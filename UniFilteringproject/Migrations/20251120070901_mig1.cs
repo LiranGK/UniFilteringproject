@@ -11,7 +11,7 @@ namespace UniFilteringproject.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "TheHaiils",
+                name: "TheCorps",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -20,7 +20,7 @@ namespace UniFilteringproject.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TheHaiils", x => x.Id);
+                    table.PrimaryKey("PK_TheCorps", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -58,15 +58,15 @@ namespace UniFilteringproject.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HaiilId = table.Column<int>(type: "int", nullable: true)
+                    CorpId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AppointedMalshab", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AppointedMalshab_TheHaiils_HaiilId",
-                        column: x => x.HaiilId,
-                        principalTable: "TheHaiils",
+                        name: "FK_AppointedMalshab_TheCorps_CorpId",
+                        column: x => x.CorpId,
+                        principalTable: "TheCorps",
                         principalColumn: "Id");
                 });
 
@@ -91,9 +91,9 @@ namespace UniFilteringproject.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppointedMalshab_HaiilId",
+                name: "IX_AppointedMalshab_CorpId",
                 table: "AppointedMalshab",
-                column: "HaiilId");
+                column: "CorpId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Haiils_UniId",
@@ -114,7 +114,7 @@ namespace UniFilteringproject.Migrations
                 name: "TheMalshabs");
 
             migrationBuilder.DropTable(
-                name: "TheHaiils");
+                name: "TheCorps");
 
             migrationBuilder.DropTable(
                 name: "TheUni");

@@ -7,7 +7,7 @@ namespace UniFilteringproject.Data
     {
         public DbSet<Uni> TheUni { get; set; }
         public DbSet<Malshab> TheMalshabs { get; set; }
-        public DbSet<Haiil> TheHaiils { get; set; }
+        public DbSet<Corp> TheCorps { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
