@@ -5,18 +5,34 @@
 namespace UniFilteringproject.Migrations
 {
     /// <inheritdoc />
-    public partial class mig1 : Migration
+    public partial class _1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Abilities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Abilities", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "TheCorps",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IsFull = table.Column<bool>(type: "bit", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsFull = table.Column<bool>(type: "bit", nullable: false),
+                    DoesBlock = table.Column<bool>(type: "bit", nullable: false),
+                    MinMalshabs = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -104,6 +120,9 @@ namespace UniFilteringproject.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Abilities");
+
             migrationBuilder.DropTable(
                 name: "AppointedMalshab");
 

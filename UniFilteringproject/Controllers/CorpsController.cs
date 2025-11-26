@@ -10,22 +10,22 @@ using UniFilteringproject.Models;
 
 namespace UniFilteringproject.Controllers
 {
-    public class CorpController : Controller
+    public class CorpsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CorpController(ApplicationDbContext context)
+        public CorpsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Corp
-        public async Task<IActionResult> IndexC()
+        // GET: Corps
+        public async Task<IActionResult> Index()
         {
-            return View(await _context.TheCorps.ToListAsync());
+            return View(await _context.Corps.ToListAsync());
         }
 
-        // GET: Corp/Details/5
+        // GET: Corps/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,7 +33,7 @@ namespace UniFilteringproject.Controllers
                 return NotFound();
             }
 
-            var corp = await _context.TheCorps
+            var corp = await _context.Corps
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (corp == null)
             {
@@ -43,37 +43,37 @@ namespace UniFilteringproject.Controllers
             return View(corp);
         }
 
-        // GET: Corp/Create
-        public IActionResult CreateC()
+        // GET: Corps/Create
+        public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Corp/Create
+        // POST: Corps/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateC([Bind("Id,IsFull")] Corp corp)
+        public async Task<IActionResult> Create([Bind("Id,Name,IsFull,DoesBlock,MinMalshabs")] Corp corp)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(corp);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(IndexC));
+                return RedirectToAction(nameof(Index));
             }
             return View(corp);
         }
 
-        // GET: Corp/Edit/5
-        public async Task<IActionResult> EditC(int? id)
+        // GET: Corps/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var corp = await _context.TheCorps.FindAsync(id);
+            var corp = await _context.Corps.FindAsync(id);
             if (corp == null)
             {
                 return NotFound();
@@ -81,12 +81,12 @@ namespace UniFilteringproject.Controllers
             return View(corp);
         }
 
-        // POST: Haiil/Edit/5
+        // POST: Corps/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditC(int id, [Bind("Id,IsFull")] Corp corp)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,IsFull,DoesBlock,MinMalshabs")] Corp corp)
         {
             if (id != corp.Id)
             {
@@ -102,7 +102,7 @@ namespace UniFilteringproject.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!HaiilExists(corp.Id))
+                    if (!CorpExists(corp.Id))
                     {
                         return NotFound();
                     }
@@ -111,47 +111,47 @@ namespace UniFilteringproject.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(IndexC));
+                return RedirectToAction(nameof(Index));
             }
             return View(corp);
         }
 
-        // GET: Corp/Delete/5
-        public async Task<IActionResult> DeleteC(int? id)
+        // GET: Corps/Delete/5
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var corp = await _context.TheCorps
+            var corp = await _context.Corps
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (corp == null)
             {
                 return NotFound();
             }
-            
+
             return View(corp);
         }
 
-        // POST: Corp/Delete/5
+        // POST: Corps/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var corp = await _context.TheCorps.FindAsync(id);
+            var corp = await _context.Corps.FindAsync(id);
             if (corp != null)
             {
-                _context.TheCorps.Remove(corp);
+                _context.Corps.Remove(corp);
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(IndexC));
+            return RedirectToAction(nameof(Index));
         }
 
-        private bool HaiilExists(int id)
+        private bool CorpExists(int id)
         {
-            return _context.TheCorps.Any(e => e.Id == id);
+            return _context.Corps.Any(e => e.Id == id);
         }
     }
 }

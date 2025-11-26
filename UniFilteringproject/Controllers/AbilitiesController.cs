@@ -10,22 +10,22 @@ using UniFilteringproject.Models;
 
 namespace UniFilteringproject.Controllers
 {
-    public class MalshabsController : Controller
+    public class AbilitiesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public MalshabsController(ApplicationDbContext context)
+        public AbilitiesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Malshabs
+        // GET: Abilities
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Malshabs.ToListAsync());
+            return View(await _context.Abilities.ToListAsync());
         }
 
-        // GET: Malshabs/Details/5
+        // GET: Abilities/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,39 @@ namespace UniFilteringproject.Controllers
                 return NotFound();
             }
 
-            var malshab = await _context.Malshabs
+            var ability = await _context.Abilities
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (malshab == null)
+            if (ability == null)
             {
                 return NotFound();
             }
 
-            return View(malshab);
+            return View(ability);
         }
 
-        // GET: Malshabs/Create
+        // GET: Abilities/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Malshabs/Create
+        // POST: Abilities/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Dapar,Profile,ImageUrl")] Malshab malshab)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Ability ability)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(malshab);
+                _context.Add(ability);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(malshab);
+            return View(ability);
         }
 
-        // GET: Malshabs/Edit/5
+        // GET: Abilities/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +73,22 @@ namespace UniFilteringproject.Controllers
                 return NotFound();
             }
 
-            var malshab = await _context.Malshabs.FindAsync(id);
-            if (malshab == null)
+            var ability = await _context.Abilities.FindAsync(id);
+            if (ability == null)
             {
                 return NotFound();
             }
-            return View(malshab);
+            return View(ability);
         }
 
-        // POST: Malshabs/Edit/5
+        // POST: Abilities/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Dapar,Profile,ImageUrl")] Malshab malshab)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Ability ability)
         {
-            if (id != malshab.Id)
+            if (id != ability.Id)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace UniFilteringproject.Controllers
             {
                 try
                 {
-                    _context.Update(malshab);
+                    _context.Update(ability);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MalshabExists(malshab.Id))
+                    if (!AbilityExists(ability.Id))
                     {
                         return NotFound();
                     }
@@ -113,10 +113,10 @@ namespace UniFilteringproject.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(malshab);
+            return View(ability);
         }
 
-        // GET: Malshabs/Delete/5
+        // GET: Abilities/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,34 +124,34 @@ namespace UniFilteringproject.Controllers
                 return NotFound();
             }
 
-            var malshab = await _context.Malshabs
+            var ability = await _context.Abilities
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (malshab == null)
+            if (ability == null)
             {
                 return NotFound();
             }
 
-            return View(malshab);
+            return View(ability);
         }
 
-        // POST: Malshabs/Delete/5
+        // POST: Abilities/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var malshab = await _context.Malshabs.FindAsync(id);
-            if (malshab != null)
+            var ability = await _context.Abilities.FindAsync(id);
+            if (ability != null)
             {
-                _context.Malshabs.Remove(malshab);
+                _context.Abilities.Remove(ability);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MalshabExists(int id)
+        private bool AbilityExists(int id)
         {
-            return _context.Malshabs.Any(e => e.Id == id);
+            return _context.Abilities.Any(e => e.Id == id);
         }
     }
 }

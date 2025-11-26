@@ -11,8 +11,8 @@ using UniFilteringproject.Data;
 namespace UniFilteringproject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251124112812_11")]
-    partial class _11
+    [Migration("20251126151018_1")]
+    partial class _1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,23 @@ namespace UniFilteringproject.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("UniFilteringproject.Models.Ability", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Abilities");
+                });
 
             modelBuilder.Entity("UniFilteringproject.Models.AppointedMalshab", b =>
                 {
@@ -54,9 +71,8 @@ namespace UniFilteringproject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DoesBlock")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("DoesBlock")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsFull")
                         .HasColumnType("bit");
