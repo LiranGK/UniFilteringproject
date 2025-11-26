@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UniFilteringproject.Data;
 
@@ -10,9 +11,11 @@ using UniFilteringproject.Data;
 namespace UniFilteringproject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251124112157_mig10")]
+    partial class mig10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,14 +54,8 @@ namespace UniFilteringproject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("DoesBlock")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsFull")
                         .HasColumnType("bit");
-
-                    b.Property<int>("MinMalshabs")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
