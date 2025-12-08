@@ -8,25 +8,24 @@ using Microsoft.EntityFrameworkCore;
 using UniFilteringproject.Data;
 using UniFilteringproject.Models;
 
-namespace UniFilteringproject.Controllers
+namespace UniFilteringProject.Controllers
 {
-    public class CorAbisController : Controller
+    public class AssignmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CorAbisController(ApplicationDbContext context)
+        public AssignmentsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: CorAbis
+        // GET: Assignments
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.CorAbi.Include(c => c.ability).Include(c => c.corp);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _context.Assignments.ToListAsync());
         }
 
-        // GET: CorAbis/Details/5
+        // GET: Assignments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,45 +33,39 @@ namespace UniFilteringproject.Controllers
                 return NotFound();
             }
 
-            var corAbi = await _context.CorAbi
-                .Include(c => c.ability)
-                .Include(c => c.corp)
+            var assignment = await _context.Assignments
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (corAbi == null)
+            if (assignment == null)
             {
                 return NotFound();
             }
 
-            return View(corAbi);
+            return View(assignment);
         }
 
-        // GET: CorAbis/Create
+        // GET: Assignments/Create
         public IActionResult Create()
         {
-            ViewData["AbilityId"] = new SelectList(_context.Abilities, "Id", "Name");
-            ViewData["CorpId"] = new SelectList(_context.Corps, "Id", "Id");
             return View();
         }
 
-        // POST: CorAbis/Create
+        // POST: Assignments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CorpId,AbilityId,AbiLevel")] CorAbi corAbi)
+        public async Task<IActionResult> Create([Bind("Id,Name,IsAboveMin,MinMalshabs")] Assignment assignment)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(corAbi);
+                _context.Add(assignment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AbilityId"] = new SelectList(_context.Abilities, "Id", "Name", corAbi.AbilityId);
-            ViewData["CorpId"] = new SelectList(_context.Corps, "Id", "Id", corAbi.CorpId);
-            return View(corAbi);
+            return View(assignment);
         }
 
-        // GET: CorAbis/Edit/5
+        // GET: Assignments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -80,24 +73,22 @@ namespace UniFilteringproject.Controllers
                 return NotFound();
             }
 
-            var corAbi = await _context.CorAbi.FindAsync(id);
-            if (corAbi == null)
+            var assignment = await _context.Assignments.FindAsync(id);
+            if (assignment == null)
             {
                 return NotFound();
             }
-            ViewData["AbilityId"] = new SelectList(_context.Abilities, "Id", "Name", corAbi.AbilityId);
-            ViewData["CorpId"] = new SelectList(_context.Corps, "Id", "Id", corAbi.CorpId);
-            return View(corAbi);
+            return View(assignment);
         }
 
-        // POST: CorAbis/Edit/5
+        // POST: Assignments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CorpId,AbilityId,AbiLevel")] CorAbi corAbi)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,IsAboveMin,MinMalshabs")] Assignment assignment)
         {
-            if (id != corAbi.Id)
+            if (id != assignment.Id)
             {
                 return NotFound();
             }
@@ -106,12 +97,12 @@ namespace UniFilteringproject.Controllers
             {
                 try
                 {
-                    _context.Update(corAbi);
+                    _context.Update(assignment);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CorAbiExists(corAbi.Id))
+                    if (!AssignmentExists(assignment.Id))
                     {
                         return NotFound();
                     }
@@ -122,12 +113,10 @@ namespace UniFilteringproject.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AbilityId"] = new SelectList(_context.Abilities, "Id", "Name", corAbi.AbilityId);
-            ViewData["CorpId"] = new SelectList(_context.Corps, "Id", "Id", corAbi.CorpId);
-            return View(corAbi);
+            return View(assignment);
         }
 
-        // GET: CorAbis/Delete/5
+        // GET: Assignments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -135,36 +124,34 @@ namespace UniFilteringproject.Controllers
                 return NotFound();
             }
 
-            var corAbi = await _context.CorAbi
-                .Include(c => c.ability)
-                .Include(c => c.corp)
+            var assignment = await _context.Assignments
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (corAbi == null)
+            if (assignment == null)
             {
                 return NotFound();
             }
 
-            return View(corAbi);
+            return View(assignment);
         }
 
-        // POST: CorAbis/Delete/5
+        // POST: Assignments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var corAbi = await _context.CorAbi.FindAsync(id);
-            if (corAbi != null)
+            var assignment = await _context.Assignments.FindAsync(id);
+            if (assignment != null)
             {
-                _context.CorAbi.Remove(corAbi);
+                _context.Assignments.Remove(assignment);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CorAbiExists(int id)
+        private bool AssignmentExists(int id)
         {
-            return _context.CorAbi.Any(e => e.Id == id);
+            return _context.Assignments.Any(e => e.Id == id);
         }
     }
 }

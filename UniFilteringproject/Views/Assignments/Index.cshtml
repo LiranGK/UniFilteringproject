@@ -1,4 +1,4 @@
-﻿@model IEnumerable<UniFilteringproject.Models.Corp>
+﻿@model IEnumerable<UniFilteringproject.Models.Assignment>
 
 @{
     ViewData["Title"] = "Index";
@@ -16,13 +16,13 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsFull)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DoesBlock)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.MinMalshabs)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CurrMalAssinged)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsAboveMin)
             </th>
             <th></th>
         </tr>
@@ -34,13 +34,13 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsFull)
+                    @Html.DisplayFor(modelItem => item.MinMalshabs)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DoesBlock)
+                @Html.DisplayFor(modelItem => item.CurrMalAssinged)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.MinMalshabs)
+                @Html.DisplayFor(modelItem => item.IsAboveMin)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

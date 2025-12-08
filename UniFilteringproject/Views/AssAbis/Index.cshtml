@@ -1,4 +1,4 @@
-﻿@model IEnumerable<UniFilteringproject.Models.Malshab>
+﻿@model IEnumerable<UniFilteringproject.Models.AssAbi>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,16 +13,13 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.assignment)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Dapar)
+                @Html.DisplayNameFor(model => model.ability)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Profile)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsAssingned)
+                @Html.DisplayNameFor(model => model.AbiLevel)
             </th>
             <th></th>
         </tr>
@@ -31,17 +28,14 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.assignment.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Dapar)
+                @Html.DisplayFor(modelItem => item.ability.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Profile)
+                @Html.DisplayFor(modelItem => item.AbiLevel)
             </td>
-            <th>
-                @Html.DisplayFor(modelItem => item.IsAssingned)
-            </th>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

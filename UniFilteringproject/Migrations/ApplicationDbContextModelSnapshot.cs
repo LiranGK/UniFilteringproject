@@ -7,7 +7,7 @@ using UniFilteringproject.Data;
 
 #nullable disable
 
-namespace UniFilteringproject.Migrations
+namespace UniFilteringProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -38,29 +38,7 @@ namespace UniFilteringproject.Migrations
                     b.ToTable("Abilities");
                 });
 
-            modelBuilder.Entity("UniFilteringproject.Models.AppointedMalshab", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CorpId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CorpId");
-
-                    b.ToTable("AppointedMalshab");
-                });
-
-            modelBuilder.Entity("UniFilteringproject.Models.CorAbi", b =>
+            modelBuilder.Entity("UniFilteringproject.Models.AssAbi", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -74,19 +52,19 @@ namespace UniFilteringproject.Migrations
                     b.Property<int>("AbilityId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CorpId")
+                    b.Property<int>("AssignmentId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AbilityId");
 
-                    b.HasIndex("CorpId");
+                    b.HasIndex("AssignmentId");
 
-                    b.ToTable("CorAbi");
+                    b.ToTable("AssAbi");
                 });
 
-            modelBuilder.Entity("UniFilteringproject.Models.Corp", b =>
+            modelBuilder.Entity("UniFilteringproject.Models.Assignment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -94,10 +72,10 @@ namespace UniFilteringproject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("DoesBlock")
-                        .HasColumnType("bit");
+                    b.Property<int>("CurrMalAssinged")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("IsFull")
+                    b.Property<bool>("IsAboveMin")
                         .HasColumnType("bit");
 
                     b.Property<int>("MinMalshabs")
@@ -109,33 +87,7 @@ namespace UniFilteringproject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Corps");
-                });
-
-            modelBuilder.Entity("UniFilteringproject.Models.Haiils", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UniId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UniId");
-
-                    b.ToTable("Haiils");
+                    b.ToTable("Assignments");
                 });
 
             modelBuilder.Entity("UniFilteringproject.Models.MalAbi", b =>
@@ -164,6 +116,29 @@ namespace UniFilteringproject.Migrations
                     b.ToTable("MalAbi");
                 });
 
+            modelBuilder.Entity("UniFilteringproject.Models.MalAss", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AssignmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MalshabId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignmentId");
+
+                    b.HasIndex("MalshabId");
+
+                    b.ToTable("MalAss");
+                });
+
             modelBuilder.Entity("UniFilteringproject.Models.Malshab", b =>
                 {
                     b.Property<int>("Id")
@@ -175,9 +150,8 @@ namespace UniFilteringproject.Migrations
                     b.Property<int>("Dapar")
                         .HasColumnType("int");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsAssingned")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -191,27 +165,7 @@ namespace UniFilteringproject.Migrations
                     b.ToTable("Malshabs");
                 });
 
-            modelBuilder.Entity("UniFilteringproject.Models.Uni", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Uni");
-                });
-
-            modelBuilder.Entity("UniFilteringproject.Models.AppointedMalshab", b =>
-                {
-                    b.HasOne("UniFilteringproject.Models.Corp", null)
-                        .WithMany("Malshabim")
-                        .HasForeignKey("CorpId");
-                });
-
-            modelBuilder.Entity("UniFilteringproject.Models.CorAbi", b =>
+            modelBuilder.Entity("UniFilteringproject.Models.AssAbi", b =>
                 {
                     b.HasOne("UniFilteringproject.Models.Ability", "ability")
                         .WithMany()
@@ -219,22 +173,15 @@ namespace UniFilteringproject.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("UniFilteringproject.Models.Corp", "corp")
+                    b.HasOne("UniFilteringproject.Models.Assignment", "assignment")
                         .WithMany()
-                        .HasForeignKey("CorpId")
+                        .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ability");
 
-                    b.Navigation("corp");
-                });
-
-            modelBuilder.Entity("UniFilteringproject.Models.Haiils", b =>
-                {
-                    b.HasOne("UniFilteringproject.Models.Uni", null)
-                        .WithMany("ListOfHaiils")
-                        .HasForeignKey("UniId");
+                    b.Navigation("assignment");
                 });
 
             modelBuilder.Entity("UniFilteringproject.Models.MalAbi", b =>
@@ -256,14 +203,23 @@ namespace UniFilteringproject.Migrations
                     b.Navigation("malshab");
                 });
 
-            modelBuilder.Entity("UniFilteringproject.Models.Corp", b =>
+            modelBuilder.Entity("UniFilteringproject.Models.MalAss", b =>
                 {
-                    b.Navigation("Malshabim");
-                });
+                    b.HasOne("UniFilteringproject.Models.Assignment", "assignment")
+                        .WithMany()
+                        .HasForeignKey("AssignmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("UniFilteringproject.Models.Uni", b =>
-                {
-                    b.Navigation("ListOfHaiils");
+                    b.HasOne("UniFilteringproject.Models.Malshab", "malshab")
+                        .WithMany()
+                        .HasForeignKey("MalshabId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("assignment");
+
+                    b.Navigation("malshab");
                 });
 #pragma warning restore 612, 618
         }

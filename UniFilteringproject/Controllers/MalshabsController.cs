@@ -54,7 +54,7 @@ namespace UniFilteringproject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Dapar,Profile,ImageUrl")] Malshab malshab)
+        public async Task<IActionResult> Create([Bind("Id,Name,Dapar,Profile")] Malshab malshab)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace UniFilteringproject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Dapar,Profile,ImageUrl")] Malshab malshab)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Dapar,Profile")] Malshab malshab)
         {
             if (id != malshab.Id)
             {

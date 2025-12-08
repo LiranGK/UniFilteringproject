@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace UniFilteringproject.Migrations
+namespace UniFilteringProject.Migrations
 {
     /// <inheritdoc />
     public partial class _1 : Migration
@@ -24,19 +24,19 @@ namespace UniFilteringproject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Corps",
+                name: "Assignments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsFull = table.Column<bool>(type: "bit", nullable: false),
-                    DoesBlock = table.Column<bool>(type: "bit", nullable: false),
+                    IsAboveMin = table.Column<bool>(type: "bit", nullable: false),
+                    CurrMalAssinged = table.Column<int>(type: "int", nullable: false),
                     MinMalshabs = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Corps", x => x.Id);
+                    table.PrimaryKey("PK_Assignments", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -48,7 +48,7 @@ namespace UniFilteringproject.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Dapar = table.Column<int>(type: "int", nullable: false),
                     Profile = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    IsAssingned = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,59 +56,28 @@ namespace UniFilteringproject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Uni",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Uni", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AppointedMalshab",
+                name: "AssAbi",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CorpId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppointedMalshab", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppointedMalshab_Corps_CorpId",
-                        column: x => x.CorpId,
-                        principalTable: "Corps",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CorAbi",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CorpId = table.Column<int>(type: "int", nullable: false),
+                    AssignmentId = table.Column<int>(type: "int", nullable: false),
                     AbilityId = table.Column<int>(type: "int", nullable: false),
                     AbiLevel = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CorAbi", x => x.Id);
+                    table.PrimaryKey("PK_AssAbi", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CorAbi_Abilities_AbilityId",
+                        name: "FK_AssAbi_Abilities_AbilityId",
                         column: x => x.AbilityId,
                         principalTable: "Abilities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CorAbi_Corps_CorpId",
-                        column: x => x.CorpId,
-                        principalTable: "Corps",
+                        name: "FK_AssAbi_Assignments_AssignmentId",
+                        column: x => x.AssignmentId,
+                        principalTable: "Assignments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -141,44 +110,40 @@ namespace UniFilteringproject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Haiils",
+                name: "MalAss",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UniId = table.Column<int>(type: "int", nullable: true)
+                    MalshabId = table.Column<int>(type: "int", nullable: false),
+                    AssignmentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Haiils", x => x.Id);
+                    table.PrimaryKey("PK_MalAss", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Haiils_Uni_UniId",
-                        column: x => x.UniId,
-                        principalTable: "Uni",
-                        principalColumn: "Id");
+                        name: "FK_MalAss_Assignments_AssignmentId",
+                        column: x => x.AssignmentId,
+                        principalTable: "Assignments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MalAss_Malshabs_MalshabId",
+                        column: x => x.MalshabId,
+                        principalTable: "Malshabs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppointedMalshab_CorpId",
-                table: "AppointedMalshab",
-                column: "CorpId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CorAbi_AbilityId",
-                table: "CorAbi",
+                name: "IX_AssAbi_AbilityId",
+                table: "AssAbi",
                 column: "AbilityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CorAbi_CorpId",
-                table: "CorAbi",
-                column: "CorpId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Haiils_UniId",
-                table: "Haiils",
-                column: "UniId");
+                name: "IX_AssAbi_AssignmentId",
+                table: "AssAbi",
+                column: "AssignmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MalAbi_AbilityId",
@@ -189,31 +154,35 @@ namespace UniFilteringproject.Migrations
                 name: "IX_MalAbi_MalshabId",
                 table: "MalAbi",
                 column: "MalshabId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MalAss_AssignmentId",
+                table: "MalAss",
+                column: "AssignmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MalAss_MalshabId",
+                table: "MalAss",
+                column: "MalshabId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AppointedMalshab");
-
-            migrationBuilder.DropTable(
-                name: "CorAbi");
-
-            migrationBuilder.DropTable(
-                name: "Haiils");
+                name: "AssAbi");
 
             migrationBuilder.DropTable(
                 name: "MalAbi");
 
             migrationBuilder.DropTable(
-                name: "Corps");
-
-            migrationBuilder.DropTable(
-                name: "Uni");
+                name: "MalAss");
 
             migrationBuilder.DropTable(
                 name: "Abilities");
+
+            migrationBuilder.DropTable(
+                name: "Assignments");
 
             migrationBuilder.DropTable(
                 name: "Malshabs");

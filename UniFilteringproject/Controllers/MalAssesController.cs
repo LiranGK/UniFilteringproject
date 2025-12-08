@@ -10,23 +10,23 @@ using UniFilteringproject.Models;
 
 namespace UniFilteringproject.Controllers
 {
-    public class MalAbisController : Controller
+    public class MalAssesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public MalAbisController(ApplicationDbContext context)
+        public MalAssesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: MalAbis
+        // GET: MalAsses
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.MalAbi.Include(m => m.ability).Include(m => m.malshab);
+            var applicationDbContext = _context.MalAss.Include(m => m.assignment).Include(m => m.malshab);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: MalAbis/Details/5
+        // GET: MalAsses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,45 +34,61 @@ namespace UniFilteringproject.Controllers
                 return NotFound();
             }
 
-            var malAbi = await _context.MalAbi
-                .Include(m => m.ability)
+            var malAss = await _context.MalAss
+                .Include(m => m.assignment)
                 .Include(m => m.malshab)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (malAbi == null)
+            if (malAss == null)
             {
                 return NotFound();
             }
 
-            return View(malAbi);
+            return View(malAss);
         }
 
-        // GET: MalAbis/Create
+        // GET: MalAsses/Create
         public IActionResult Create()
         {
-            ViewData["AbilityId"] = new SelectList(_context.Abilities, "Id", "Name");
+            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Name");
             ViewData["MalshabId"] = new SelectList(_context.Malshabs, "Id", "Name");
             return View();
         }
 
-        // POST: MalAbis/Create
+        // POST: MalAsses/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,MalshabId,AbilityId,AbiLevel")] MalAbi malAbi)
+        public async Task<IActionResult> Create([Bind("Id,MalshabId,AssignmentId")] MalAss malAss)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(malAbi);
+                var malshab = await _context.Malshabs.FindAsync(malAss.MalshabId);
+                var assignment = await _context.Assignments.FindAsync(malAss.MalshabId);
+                if (malshab != null)
+                {
+                    malshab.IsAssingned = true;
+                    _context.Update(malshab);
+                }
+                if (assignment != null)
+                {
+                    assignment.CurrMalAssinged=assignment.CurrMalAssinged+1;
+                    if (assignment.CurrMalAssinged >= assignment.MinMalshabs)
+                    {
+                        assignment.IsAboveMin = true;
+                    }
+                    _context.Update(assignment);
+                }
+                _context.Add(malAss);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AbilityId"] = new SelectList(_context.Abilities, "Id", "Name", malAbi.AbilityId);
-            ViewData["MalshabId"] = new SelectList(_context.Malshabs, "Id", "Name", malAbi.MalshabId);
-            return View(malAbi);
+            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Name", malAss.AssignmentId);
+            ViewData["MalshabId"] = new SelectList(_context.Malshabs, "Id", "Name", malAss.MalshabId);
+            return View(malAss);
         }
 
-        // GET: MalAbis/Edit/5
+        // GET: MalAsses/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -80,24 +96,24 @@ namespace UniFilteringproject.Controllers
                 return NotFound();
             }
 
-            var malAbi = await _context.MalAbi.FindAsync(id);
-            if (malAbi == null)
+            var malAss = await _context.MalAss.FindAsync(id);
+            if (malAss == null)
             {
                 return NotFound();
             }
-            ViewData["AbilityId"] = new SelectList(_context.Abilities, "Id", "Name", malAbi.AbilityId);
-            ViewData["MalshabId"] = new SelectList(_context.Malshabs, "Id", "Name", malAbi.MalshabId);
-            return View(malAbi);
+            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Name", malAss.AssignmentId);
+            ViewData["MalshabId"] = new SelectList(_context.Malshabs, "Id", "Name", malAss.MalshabId);
+            return View(malAss);
         }
 
-        // POST: MalAbis/Edit/5
+        // POST: MalAsses/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,MalshabId,AbilityId,AbiLevel")] MalAbi malAbi)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,MalshabId,AssignmentId")] MalAss malAss)
         {
-            if (id != malAbi.Id)
+            if (id != malAss.Id)
             {
                 return NotFound();
             }
@@ -106,12 +122,12 @@ namespace UniFilteringproject.Controllers
             {
                 try
                 {
-                    _context.Update(malAbi);
+                    _context.Update(malAss);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MalAbiExists(malAbi.Id))
+                    if (!MalAssExists(malAss.Id))
                     {
                         return NotFound();
                     }
@@ -122,12 +138,12 @@ namespace UniFilteringproject.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AbilityId"] = new SelectList(_context.Abilities, "Id", "Name", malAbi.AbilityId);
-            ViewData["MalshabId"] = new SelectList(_context.Malshabs, "Id", "Name", malAbi.MalshabId);
-            return View(malAbi);
+            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Name", malAss.AssignmentId);
+            ViewData["MalshabId"] = new SelectList(_context.Malshabs, "Id", "Name", malAss.MalshabId);
+            return View(malAss);
         }
 
-        // GET: MalAbis/Delete/5
+        // GET: MalAsses/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -135,36 +151,36 @@ namespace UniFilteringproject.Controllers
                 return NotFound();
             }
 
-            var malAbi = await _context.MalAbi
-                .Include(m => m.ability)
+            var malAss = await _context.MalAss
+                .Include(m => m.assignment)
                 .Include(m => m.malshab)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (malAbi == null)
+            if (malAss == null)
             {
                 return NotFound();
             }
 
-            return View(malAbi);
+            return View(malAss);
         }
 
-        // POST: MalAbis/Delete/5
+        // POST: MalAsses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var malAbi = await _context.MalAbi.FindAsync(id);
-            if (malAbi != null)
+            var malAss = await _context.MalAss.FindAsync(id);
+            if (malAss != null)
             {
-                _context.MalAbi.Remove(malAbi);
+                _context.MalAss.Remove(malAss);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MalAbiExists(int id)
+        private bool MalAssExists(int id)
         {
-            return _context.MalAbi.Any(e => e.Id == id);
+            return _context.MalAss.Any(e => e.Id == id);
         }
     }
 }

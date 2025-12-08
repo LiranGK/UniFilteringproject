@@ -10,22 +10,23 @@ using UniFilteringproject.Models;
 
 namespace UniFilteringproject.Controllers
 {
-    public class CorpsController : Controller
+    public class AssAbisController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CorpsController(ApplicationDbContext context)
+        public AssAbisController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Corps
+        // GET: AssAbis
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Corps.ToListAsync());
+            var applicationDbContext = _context.AssAbi.Include(a => a.ability).Include(a => a.assignment);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Corps/Details/5
+        // GET: AssAbis/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +34,45 @@ namespace UniFilteringproject.Controllers
                 return NotFound();
             }
 
-            var corp = await _context.Corps
+            var assAbi = await _context.AssAbi
+                .Include(a => a.ability)
+                .Include(a => a.assignment)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (corp == null)
+            if (assAbi == null)
             {
                 return NotFound();
             }
 
-            return View(corp);
+            return View(assAbi);
         }
 
-        // GET: Corps/Create
+        // GET: AssAbis/Create
         public IActionResult Create()
         {
+            ViewData["AbilityId"] = new SelectList(_context.Abilities, "Id", "Name");
+            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Name");
             return View();
         }
 
-        // POST: Corps/Create
+        // POST: AssAbis/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,IsFull,DoesBlock,MinMalshabs")] Corp corp)
+        public async Task<IActionResult> Create([Bind("Id,AssignmentId,AbilityId,AbiLevel")] AssAbi assAbi)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(corp);
+                _context.Add(assAbi);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(corp);
+            ViewData["AbilityId"] = new SelectList(_context.Abilities, "Id", "Name", assAbi.AbilityId);
+            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Name", assAbi.AssignmentId);
+            return View(assAbi);
         }
 
-        // GET: Corps/Edit/5
+        // GET: AssAbis/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +80,24 @@ namespace UniFilteringproject.Controllers
                 return NotFound();
             }
 
-            var corp = await _context.Corps.FindAsync(id);
-            if (corp == null)
+            var assAbi = await _context.AssAbi.FindAsync(id);
+            if (assAbi == null)
             {
                 return NotFound();
             }
-            return View(corp);
+            ViewData["AbilityId"] = new SelectList(_context.Abilities, "Id", "Name", assAbi.AbilityId);
+            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Name", assAbi.AssignmentId);
+            return View(assAbi);
         }
 
-        // POST: Corps/Edit/5
+        // POST: AssAbis/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,IsFull,DoesBlock,MinMalshabs")] Corp corp)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,AssignmentId,AbilityId,AbiLevel")] AssAbi assAbi)
         {
-            if (id != corp.Id)
+            if (id != assAbi.Id)
             {
                 return NotFound();
             }
@@ -97,12 +106,12 @@ namespace UniFilteringproject.Controllers
             {
                 try
                 {
-                    _context.Update(corp);
+                    _context.Update(assAbi);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CorpExists(corp.Id))
+                    if (!AssAbiExists(assAbi.Id))
                     {
                         return NotFound();
                     }
@@ -113,10 +122,12 @@ namespace UniFilteringproject.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(corp);
+            ViewData["AbilityId"] = new SelectList(_context.Abilities, "Id", "Name", assAbi.AbilityId);
+            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Name", assAbi.AssignmentId);
+            return View(assAbi);
         }
 
-        // GET: Corps/Delete/5
+        // GET: AssAbis/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,34 +135,36 @@ namespace UniFilteringproject.Controllers
                 return NotFound();
             }
 
-            var corp = await _context.Corps
+            var assAbi = await _context.AssAbi
+                .Include(a => a.ability)
+                .Include(a => a.assignment)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (corp == null)
+            if (assAbi == null)
             {
                 return NotFound();
             }
 
-            return View(corp);
+            return View(assAbi);
         }
 
-        // POST: Corps/Delete/5
+        // POST: AssAbis/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var corp = await _context.Corps.FindAsync(id);
-            if (corp != null)
+            var assAbi = await _context.AssAbi.FindAsync(id);
+            if (assAbi != null)
             {
-                _context.Corps.Remove(corp);
+                _context.AssAbi.Remove(assAbi);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CorpExists(int id)
+        private bool AssAbiExists(int id)
         {
-            return _context.Corps.Any(e => e.Id == id);
+            return _context.AssAbi.Any(e => e.Id == id);
         }
     }
 }
