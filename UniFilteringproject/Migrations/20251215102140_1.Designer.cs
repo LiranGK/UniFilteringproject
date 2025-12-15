@@ -11,7 +11,7 @@ using UniFilteringproject.Data;
 namespace UniFilteringProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251208134745_1")]
+    [Migration("20251215102140_1")]
     partial class _1
     {
         /// <inheritdoc />
