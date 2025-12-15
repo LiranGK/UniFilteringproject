@@ -9,6 +9,7 @@ namespace UniFilteringproject.Models
         public string Name { get; set; }
         public int Dapar { get; set; }
         public int Profile { get; set; }
-        public bool IsAssingned { get; set; } = false;
+        public bool IsAssingned { get; set; }
+        public ICollection<MalAbi>? MalAbis { get; set; }
     }
 }

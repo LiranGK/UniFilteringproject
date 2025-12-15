@@ -16,7 +16,7 @@ namespace UniFilteringProject.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.10")
+                .HasAnnotation("ProductVersion", "9.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -75,6 +75,9 @@ namespace UniFilteringProject.Migrations
                     b.Property<int>("CurrMalAssinged")
                         .HasColumnType("int");
 
+                    b.Property<int>("DaparNeeded")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsAboveMin")
                         .HasColumnType("bit");
 
@@ -84,6 +87,9 @@ namespace UniFilteringProject.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProfileNeeded")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -193,7 +199,7 @@ namespace UniFilteringProject.Migrations
                         .IsRequired();
 
                     b.HasOne("UniFilteringproject.Models.Malshab", "malshab")
-                        .WithMany()
+                        .WithMany("MalAbis")
                         .HasForeignKey("MalshabId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -220,6 +226,11 @@ namespace UniFilteringProject.Migrations
                     b.Navigation("assignment");
 
                     b.Navigation("malshab");
+                });
+
+            modelBuilder.Entity("UniFilteringproject.Models.Malshab", b =>
+                {
+                    b.Navigation("MalAbis");
                 });
 #pragma warning restore 612, 618
         }

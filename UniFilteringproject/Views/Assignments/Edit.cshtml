@@ -18,10 +18,25 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="DaparNeeded" class="control-label"></label>
+                <input asp-for="DaparNeeded" class="form-control" />
+                <span asp-validation-for="DaparNeeded" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProfileNeeded" class="control-label"></label>
+                <input asp-for="ProfileNeeded" class="form-control" />
+                <span asp-validation-for="ProfileNeeded" class="text-danger"></span>
+            </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="IsAboveMin" /> @Html.DisplayNameFor(model => model.IsAboveMin)
                 </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="CurrMalAssinged" class="control-label"></label>
+                <input asp-for="CurrMalAssinged" class="form-control" />
+                <span asp-validation-for="CurrMalAssinged" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="MinMalshabs" class="control-label"></label>

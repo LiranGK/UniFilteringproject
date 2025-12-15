@@ -25,6 +25,25 @@ namespace UniFilteringproject.Controllers
             return View(await _context.Malshabs.ToListAsync());
         }
 
+        public async Task<IActionResult> Viable(int assignmentId)
+        {
+            // Get all requirements for the assignment
+            var requirements = await _context.AssAbi
+                .Where(r => r.AssignmentId == assignmentId)
+                .ToListAsync();
+
+            var viableMalshabs = await _context.Malshabs
+                .Include(m => m.MalAbis)
+                .Where(m =>
+                    requirements.All(req =>
+                        m.MalAbis.Any(ma =>
+                            ma.AbilityId == req.AbilityId &&
+                            ma.AbiLevel >= req.AbiLevel)))
+                .ToListAsync();
+
+            return View(viableMalshabs);
+        }
+
         // GET: Malshabs/Details/5
         public async Task<IActionResult> Details(int? id)
         {

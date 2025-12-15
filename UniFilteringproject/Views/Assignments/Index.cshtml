@@ -16,13 +16,19 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.MinMalshabs)
+                @Html.DisplayNameFor(model => model.DaparNeeded)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProfileNeeded)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsAboveMin)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CurrMalAssinged)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsAboveMin)
+                @Html.DisplayNameFor(model => model.MinMalshabs)
             </th>
             <th></th>
         </tr>
@@ -34,13 +40,19 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => item.MinMalshabs)
+                @Html.DisplayFor(modelItem => item.DaparNeeded)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProfileNeeded)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsAboveMin)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CurrMalAssinged)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsAboveMin)
+                @Html.DisplayFor(modelItem => item.MinMalshabs)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

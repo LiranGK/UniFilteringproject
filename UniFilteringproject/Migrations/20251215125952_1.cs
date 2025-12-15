@@ -30,6 +30,8 @@ namespace UniFilteringProject.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DaparNeeded = table.Column<int>(type: "int", nullable: false),
+                    ProfileNeeded = table.Column<int>(type: "int", nullable: false),
                     IsAboveMin = table.Column<bool>(type: "bit", nullable: false),
                     CurrMalAssinged = table.Column<int>(type: "int", nullable: false),
                     MinMalshabs = table.Column<int>(type: "int", nullable: false)

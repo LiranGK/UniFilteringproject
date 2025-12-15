@@ -54,10 +54,12 @@ namespace UniFilteringProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,IsAboveMin,MinMalshabs")] Assignment assignment)
+        public async Task<IActionResult> Create([Bind("Id,Name,DaparNeeded,ProfileNeeded,IsAboveMin,CurrMalAssinged,MinMalshabs")] Assignment assignment)
         {
             if (ModelState.IsValid)
             {
+                assignment.IsAboveMin = false;
+                assignment.CurrMalAssinged = 0;
                 _context.Add(assignment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -86,7 +88,7 @@ namespace UniFilteringProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,IsAboveMin,MinMalshabs")] Assignment assignment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DaparNeeded,ProfileNeeded,IsAboveMin,CurrMalAssinged,MinMalshabs")] Assignment assignment)
         {
             if (id != assignment.Id)
             {
