@@ -25,24 +25,40 @@ namespace UniFilteringproject.Controllers
             return View(await _context.Malshabs.ToListAsync());
         }
 
+        [HttpGet("Malshabs/Viable/{assignmentId}")]
         public async Task<IActionResult> Viable(int assignmentId)
         {
-            // Get all requirements for the assignment
-            var requirements = await _context.AssAbi
-                .Where(r => r.AssignmentId == assignmentId)
-                .ToListAsync();
+            var assignment = await _context.Assignments
+                .Where(a => a.Id == assignmentId)
+                .Select(a => new
+                    {
+                    a.DaparNeeded,
+                    a.ProfileNeeded
+                })
+                .SingleOrDefaultAsync();
+
+            if (assignment == null)
+            {
+                return NotFound(); // or a custom error view
+            }
+
 
             var viableMalshabs = await _context.Malshabs
                 .Include(m => m.MalAbis)
                 .Where(m =>
-                    requirements.All(req =>
-                        m.MalAbis.Any(ma =>
-                            ma.AbilityId == req.AbilityId &&
-                            ma.AbiLevel >= req.AbiLevel)))
+                    m.Dapar >= assignment.DaparNeeded &&
+                    m.Profile >= assignment.ProfileNeeded &&
+                    !_context.AssAbi
+                        .Where(r => r.AssignmentId == assignmentId)
+                        .Any(req =>
+                            !m.MalAbis.Any(ma =>
+                                ma.AbilityId == req.AbilityId &&
+                                ma.AbiLevel >= req.AbiLevel)))
                 .ToListAsync();
 
             return View(viableMalshabs);
         }
+
 
         // GET: Malshabs/Details/5
         public async Task<IActionResult> Details(int? id)
