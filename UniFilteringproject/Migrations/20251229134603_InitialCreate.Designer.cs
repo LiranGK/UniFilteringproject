@@ -11,8 +11,8 @@ using UniFilteringproject.Data;
 namespace UniFilteringProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251215125952_1")]
-    partial class _1
+    [Migration("20251229134603_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,7 +159,7 @@ namespace UniFilteringProject.Migrations
                     b.Property<int>("Dapar")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsAssingned")
+                    b.Property<bool>("IsAssigned")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
