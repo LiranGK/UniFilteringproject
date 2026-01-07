@@ -156,7 +156,7 @@ namespace UniFilteringProject.Migrations
                     b.Property<int>("Dapar")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsAssingned")
+                    b.Property<bool>("IsAssigned")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")

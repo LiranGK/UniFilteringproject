@@ -67,7 +67,7 @@ namespace UniFilteringproject.Controllers
                 var assignment = await _context.Assignments.FindAsync(malAss.AssignmentId);
                 if (malshab != null)
                 {
-                    malshab.IsAssingned = true;
+                    malshab.IsAssigned = true;
                     _context.Update(malshab);
                 }
                 if (assignment != null)

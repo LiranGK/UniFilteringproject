@@ -5,7 +5,7 @@
 namespace UniFilteringProject.Migrations
 {
     /// <inheritdoc />
-    public partial class _1 : Migration
+    public partial class initialMig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -50,7 +50,7 @@ namespace UniFilteringProject.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Dapar = table.Column<int>(type: "int", nullable: false),
                     Profile = table.Column<int>(type: "int", nullable: false),
-                    IsAssingned = table.Column<bool>(type: "bit", nullable: false)
+                    IsAssigned = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
