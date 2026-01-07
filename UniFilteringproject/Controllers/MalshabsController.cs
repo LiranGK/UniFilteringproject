@@ -32,7 +32,6 @@ namespace UniFilteringproject.Controllers
                 .Where(a => a.Id == assignmentId)
                 .Select(a => new
                     {
-                    a.Name,
                     a.DaparNeeded,
                     a.ProfileNeeded
                 })
@@ -57,8 +56,6 @@ namespace UniFilteringproject.Controllers
                                 ma.AbiLevel >= req.AbiLevel)))
                 .ToListAsync();
 
-            ViewData["Title"] = assignment.Name;
-            ViewData["AssignmentName"] = assignment.Name;
             return View(viableMalshabs);
         }
 
