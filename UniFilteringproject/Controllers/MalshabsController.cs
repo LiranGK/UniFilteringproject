@@ -22,58 +22,24 @@ namespace UniFilteringproject.Controllers
         // GET: Malshabs
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Malshabs.ToListAsync());
+            // Fix: Added Include so the calculated property 'IsAssigned' works on the list page
+            return View(await _context.Malshabs
+                .Include(m => m.MalAssignedList)
+                .ToListAsync());
         }
-
-        [HttpGet("Malshabs/Viable/{assignmentId}")]
-        public async Task<IActionResult> Viable(int assignmentId)
-        {
-            var assignment = await _context.Assignments
-                .Where(a => a.Id == assignmentId)
-                .Select(a => new
-                    {
-                    a.DaparNeeded,
-                    a.ProfileNeeded
-                })
-                .SingleOrDefaultAsync();
-
-            if (assignment == null)
-            {
-                return NotFound(); // or a custom error view
-            }
-
-
-            var viableMalshabs = await _context.Malshabs
-                .Include(m => m.MalAbis)
-                .Where(m =>
-                    m.Dapar >= assignment.DaparNeeded &&
-                    m.Profile >= assignment.ProfileNeeded &&
-                    !_context.AssAbi
-                        .Where(r => r.AssignmentId == assignmentId)
-                        .Any(req =>
-                            !m.MalAbis.Any(ma =>
-                                ma.AbilityId == req.AbilityId &&
-                                ma.AbiLevel >= req.AbiLevel)))
-                .ToListAsync();
-
-            return View(viableMalshabs);
-        }
-
 
         // GET: Malshabs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
+            // Fix: Added Include and ThenInclude so you can see the Names of the assignments this Malshab has
             var malshab = await _context.Malshabs
+                .Include(m => m.MalAssignedList)
+                    .ThenInclude(ma => ma.Assignment)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (malshab == null)
-            {
-                return NotFound();
-            }
+
+            if (malshab == null) return NotFound();
 
             return View(malshab);
         }
@@ -84,9 +50,6 @@ namespace UniFilteringproject.Controllers
             return View();
         }
 
-        // POST: Malshabs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Dapar,Profile")] Malshab malshab)
@@ -103,30 +66,19 @@ namespace UniFilteringproject.Controllers
         // GET: Malshabs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var malshab = await _context.Malshabs.FindAsync(id);
-            if (malshab == null)
-            {
-                return NotFound();
-            }
+            if (malshab == null) return NotFound();
+
             return View(malshab);
         }
 
-        // POST: Malshabs/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Dapar,Profile")] Malshab malshab)
         {
-            if (id != malshab.Id)
-            {
-                return NotFound();
-            }
+            if (id != malshab.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -137,39 +89,61 @@ namespace UniFilteringproject.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MalshabExists(malshab.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!MalshabExists(malshab.Id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(malshab);
         }
 
+        // GET: Malshabs/Viable/5
+        [HttpGet("Malshabs/Viable/{id}")]
+        public async Task<IActionResult> Viable(int id)
+        {
+            // We fetch the Name along with the requirements
+            var assignment = await _context.Assignments
+                .Where(a => a.Id == id)
+                .Select(a => new { a.Name, a.DaparNeeded, a.ProfileNeeded })
+                .SingleOrDefaultAsync();
+
+            if (assignment == null) return NotFound();
+
+            // Store the name in ViewData so you can use it in the View's title: @ViewData["AssignmentName"]
+            ViewData["AssignmentName"] = assignment.Name;
+
+            var viableMalshabs = await _context.Malshabs
+                .Include(m => m.MalAbis)
+                .Include(m => m.MalAssignedList)
+                .Where(m =>
+                    m.Dapar >= assignment.DaparNeeded &&
+                    m.Profile >= assignment.ProfileNeeded &&
+                    !_context.AssAbi
+                        .Where(r => r.AssignmentId == id)
+                        .Any(req =>
+                            !m.MalAbis.Any(ma =>
+                                ma.AbilityId == req.AbilityId &&
+                                ma.AbiLevel >= req.AbiLevel)))
+                .ToListAsync();
+
+            return View(viableMalshabs);
+        }
+
         // GET: Malshabs/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
+            // Fix: Include assignments here so the user knows what they are removing the Malshab from
             var malshab = await _context.Malshabs
+                .Include(m => m.MalAssignedList)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (malshab == null)
-            {
-                return NotFound();
-            }
+
+            if (malshab == null) return NotFound();
 
             return View(malshab);
         }
 
-        // POST: Malshabs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

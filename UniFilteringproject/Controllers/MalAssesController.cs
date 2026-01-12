@@ -20,10 +20,13 @@ namespace UniFilteringproject.Controllers
         }
 
         // GET: MalAsses
+        // In MalAssController.cs
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.MalAss.Include(m => m.assignment).Include(m => m.malshab);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _context.MalAss
+                .Include(m => m.Malshab)
+                .Include(m => m.Assignment)
+                .ToListAsync());
         }
 
         // GET: MalAsses/Details/5
@@ -35,8 +38,8 @@ namespace UniFilteringproject.Controllers
             }
 
             var malAss = await _context.MalAss
-                .Include(m => m.assignment)
-                .Include(m => m.malshab)
+                .Include(m => m.Assignment)
+                .Include(m => m.Malshab)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (malAss == null)
             {
@@ -63,22 +66,6 @@ namespace UniFilteringproject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var malshab = await _context.Malshabs.FindAsync(malAss.MalshabId);
-                var assignment = await _context.Assignments.FindAsync(malAss.AssignmentId);
-                if (malshab != null)
-                {
-                    malshab.IsAssingned = true;
-                    _context.Update(malshab);
-                }
-                if (assignment != null)
-                {
-                    assignment.CurrMalAssinged=assignment.CurrMalAssinged+1;
-                    if (assignment.CurrMalAssinged >= assignment.MinMalshabs)
-                    {
-                        assignment.IsAboveMin = true;
-                    }
-                    _context.Update(assignment);
-                }
                 _context.Add(malAss);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -152,8 +139,8 @@ namespace UniFilteringproject.Controllers
             }
 
             var malAss = await _context.MalAss
-                .Include(m => m.assignment)
-                .Include(m => m.malshab)
+                .Include(m => m.Assignment)
+                .Include(m => m.Malshab)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (malAss == null)
             {

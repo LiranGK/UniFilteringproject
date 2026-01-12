@@ -4,38 +4,53 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Assigned Malshabs</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New Assignment</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.malshab)
+                @Html.DisplayNameFor(model => model.Malshab)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.assignment)
+                @Html.DisplayNameFor(model => model.Assignment)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.malshab.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.assignment.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (item.Malshab != null)
+                    {
+                        @Html.DisplayFor(modelItem => item.Malshab.Name)
+                    }
+                    else
+                    {
+                        <span class="text-danger">Malshab Data Missing</span>
+                    }
+                </td>
+                <td>
+                    @if (item.Assignment != null)
+                    {
+                        @Html.DisplayFor(modelItem => item.Assignment.Name)
+                    }
+                    else
+                    {
+                        <span class="text-danger">Assignment Data Missing</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -3,9 +3,10 @@
     public class MalAss
     {
         public int Id { get; set; }
+
         public int MalshabId { get; set; }
-        public Malshab? malshab { get; set; }
+        public virtual Malshab? Malshab { get; set; }
         public int AssignmentId { get; set; }
-        public Assignment? assignment { get; set; }
+        public virtual Assignment? Assignment { get; set; }
     }
 }

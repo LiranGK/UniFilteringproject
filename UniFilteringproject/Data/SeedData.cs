@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using UniFilteringproject.Data;
 using UniFilteringproject.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace UniFilteringproject.Data
 {
@@ -9,97 +11,135 @@ namespace UniFilteringproject.Data
     {
         public static void Initialize(ApplicationDbContext context)
         {
-            context.Database.EnsureCreated();
+            // Ensures the database exists and schema is created
+            context.Database.Migrate();
 
-            // ----- 1️⃣ Seed Malshabs -----
-            if (!context.Malshabs.Any())
-            {
-                var malshabs = new[]
-                {
-                    new Malshab { Name = "Ariel", Dapar = 60, Profile = 64, IsAssigned = false },
-                    new Malshab { Name = "Liran", Dapar = 90, Profile = 97, IsAssigned = false },
-                    new Malshab { Name = "Eli", Dapar = 60, Profile = 64, IsAssigned = false }
-                };
-
-                context.Malshabs.AddRange(malshabs);
-                context.SaveChanges();
-            }
-
-            // ----- 2️⃣ Seed Assignments -----
-            if (!context.Assignments.Any())
-            {
-                var assignments = new[]
-                {
-                    new Assignment { Name = "Paramedic", DaparNeeded = 60, ProfileNeeded = 64, MinMalshabs = 2 },
-                    new Assignment { Name = "Fighter", DaparNeeded = 10, ProfileNeeded = 72, MinMalshabs = 3 }
-                };
-
-                context.Assignments.AddRange(assignments);
-                context.SaveChanges();
-            }
-
-            // ----- 3️⃣ Seed Ability -----
+            // 1. Seed Abilities
             if (!context.Abilities.Any())
             {
-                var abilities = new[]
+                context.Abilities.AddRange(new List<Ability>
                 {
-                    new Ability { Name = "Leadership" }
-                };
-
-                context.Abilities.AddRange(abilities);
+                    new Ability { Name = "Leadership" },
+                    new Ability { Name = "Stamina" },
+                    new Ability { Name = "Technical" }
+                });
                 context.SaveChanges();
             }
 
-            // ----- 4️⃣ Seed MalAss relationships -----
+            // 2. Seed Malshabs (Candidates)
+            if (!context.Malshabs.Any())
+            {
+                context.Malshabs.AddRange(new List<Malshab>
+                {
+                    new Malshab { Name = "Ariel", Dapar = 60, Profile = 64 },
+                    new Malshab { Name = "Liran", Dapar = 90, Profile = 97 },
+                    new Malshab { Name = "Eli", Dapar = 60, Profile = 64}
+                });
+                context.SaveChanges();
+            }
+
+            // 3. Seed Assignments (Jobs/Roles)
+            if (!context.Assignments.Any())
+            {
+                context.Assignments.AddRange(new List<Assignment>
+                {
+                    new Assignment
+                    {
+                        Name = "Paramedic",
+                        DaparNeeded = 60,
+                        ProfileNeeded = 64,
+                        MinMalshabs = 2
+                    },
+                    new Assignment
+                    {
+                        Name = "Fighter",
+                        DaparNeeded = 10,
+                        ProfileNeeded = 72,
+                        MinMalshabs = 3
+                    }
+                });
+                context.SaveChanges();
+            }
+
+            // Retrieve the data we just saved to get their generated Database IDs
+            var malshabs = context.Malshabs.ToList();
+            var assignments = context.Assignments.ToList();
+            var abilities = context.Abilities.ToList();
+
+            // 4. Seed MalAss (Assign Malshabs to Jobs)[currently not needed]
             if (!context.MalAss.Any())
             {
-                var malshabs = context.Malshabs.ToList();
-                var assignments = context.Assignments.ToList();
-
-                context.MalAss.Add(new MalAss { MalshabId = malshabs[0].Id, AssignmentId = assignments[0].Id });
-                context.MalAss.Add(new MalAss { MalshabId = malshabs[1].Id, AssignmentId = assignments[1].Id });
-                context.MalAss.Add(new MalAss { MalshabId = malshabs[2].Id, AssignmentId = assignments[0].Id });
-
-                context.SaveChanges();
+             
             }
 
-            // ----- 5️⃣ Seed MalAbi relationships -----
+            // 5. Seed MalAbi (Candidate Ability Levels)
             if (!context.MalAbi.Any())
             {
-                var malshabs = context.Malshabs.ToList();
-                var ability = context.Abilities.First();
-
-                foreach (var malshab in malshabs)
+                // Ariel has Leadership Level 4
+                context.MalAbi.Add(new MalAbi
                 {
-                    context.MalAbi.Add(new MalAbi
-                    {
-                        MalshabId = malshab.Id,
-                        AbilityId = ability.Id
-                    });
-                }
-
-                context.SaveChanges();
+                    MalshabId = malshabs[0].Id,
+                    AbilityId = abilities[0].Id, // Leadership
+                    AbiLevel = 4
+                });
+                // Ariel has Stamina Level 4
+                context.MalAbi.Add(new MalAbi
+                {
+                    MalshabId = malshabs[0].Id,
+                    AbilityId = abilities[1].Id, // Leadership
+                    AbiLevel = 4
+                });
+                // Liran has Leadership Level 5
+                context.MalAbi.Add(new MalAbi
+                {
+                    MalshabId = malshabs[1].Id,
+                    AbilityId = abilities[0].Id, // Leadership
+                    AbiLevel = 5
+                });
+                // Liran has Stamina Level 4
+                context.MalAbi.Add(new MalAbi
+                {
+                    MalshabId = malshabs[1].Id,
+                    AbilityId = abilities[1].Id, // Leadership
+                    AbiLevel = 4
+                });
+                // Eli has Leadership Level 3
+                context.MalAbi.Add(new MalAbi
+                {
+                    MalshabId = malshabs[2].Id,
+                    AbilityId = abilities[0].Id, // Leadership
+                    AbiLevel = 3
+                });
+                // Eli has Stamina Level 2
+                context.MalAbi.Add(new MalAbi
+                {
+                    MalshabId = malshabs[2].Id,
+                    AbilityId = abilities[1].Id, // Leadership
+                    AbiLevel = 2
+                });
             }
 
-            // ----- 6️⃣ Seed AssAbi relationships -----
+            // 6. Seed AssAbi (Assignment Ability Requirements)
             if (!context.AssAbi.Any())
             {
-                var assignments = context.Assignments.ToList();
-                var ability = context.Abilities.First();
-
-                foreach (var assignment in assignments)
+                // Paramedic requires Leadership (Level 4)
+                context.AssAbi.Add(new AssAbi
                 {
-                    context.AssAbi.Add(new AssAbi
-                    {
-                        AssignmentId = assignment.Id,
-                        AbilityId = ability.Id
-                    });
-                }
+                    AssignmentId = assignments[0].Id,
+                    AbilityId = abilities[0].Id,
+                    AbiLevel = 4
+                });
 
-                context.SaveChanges();
+                // Fighter requires Stamina (Level 3)
+                context.AssAbi.Add(new AssAbi
+                {
+                    AssignmentId = assignments[1].Id,
+                    AbilityId = abilities[1].Id,
+                    AbiLevel = 3
+                });
             }
 
-            Console.WriteLine("--> SEEDING COMPLETE!");
+            context.SaveChanges();
         }
     }
 }
