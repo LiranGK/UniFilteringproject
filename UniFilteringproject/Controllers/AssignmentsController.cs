@@ -19,47 +19,35 @@ namespace UniFilteringProject.Controllers
             _context = context;
         }
 
-        // GET: Assignments
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Assignments.ToListAsync());
+            return View(await _context.Assignments
+                .Include(a => a.MalAssignedList)
+                .ToListAsync());
         }
 
-        // GET: Assignments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var assignment = await _context.Assignments
+                .Include(a => a.MalAssignedList)
+                    .ThenInclude(ma => ma.Malshab)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (assignment == null)
-            {
-                return NotFound();
-            }
+
+            if (assignment == null) return NotFound();
 
             return View(assignment);
         }
 
-        // GET: Assignments/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
-        // POST: Assignments/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,DaparNeeded,ProfileNeeded,IsAboveMin,CurrMalAssinged,MinMalshabs")] Assignment assignment)
+        public async Task<IActionResult> Create([Bind("Id,Name,DaparNeeded,ProfileNeeded,MinMalshabs")] Assignment assignment)
         {
             if (ModelState.IsValid)
             {
-                assignment.IsAboveMin = false;
-                assignment.CurrMalAssinged = 0;
                 _context.Add(assignment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -67,33 +55,19 @@ namespace UniFilteringProject.Controllers
             return View(assignment);
         }
 
-        // GET: Assignments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var assignment = await _context.Assignments.FindAsync(id);
-            if (assignment == null)
-            {
-                return NotFound();
-            }
+            if (assignment == null) return NotFound();
             return View(assignment);
         }
 
-        // POST: Assignments/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DaparNeeded,ProfileNeeded,IsAboveMin,CurrMalAssinged,MinMalshabs")] Assignment assignment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DaparNeeded,ProfileNeeded,MinMalshabs")] Assignment assignment)
         {
-            if (id != assignment.Id)
-            {
-                return NotFound();
-            }
+            if (id != assignment.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -104,56 +78,36 @@ namespace UniFilteringProject.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AssignmentExists(assignment.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!AssignmentExists(assignment.Id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(assignment);
         }
 
-        // GET: Assignments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var assignment = await _context.Assignments
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (assignment == null)
-            {
-                return NotFound();
-            }
+            if (assignment == null) return NotFound();
 
             return View(assignment);
         }
 
-        // POST: Assignments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var assignment = await _context.Assignments.FindAsync(id);
-            if (assignment != null)
-            {
-                _context.Assignments.Remove(assignment);
-            }
+            if (assignment != null) _context.Assignments.Remove(assignment);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AssignmentExists(int id)
-        {
-            return _context.Assignments.Any(e => e.Id == id);
-        }
+        private bool AssignmentExists(int id) => _context.Assignments.Any(e => e.Id == id);
     }
 }
