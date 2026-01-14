@@ -6,49 +6,51 @@
 
 <h1>Assigned Malshabs</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New Assignment</a>
-</p>
-<table class="table">
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Attention:</strong> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="d-flex justify-content-between mb-3">
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Assign Manually</a>
+    </p>
+
+    <form asp-action="RunAutoAssignment" method="post">
+        <button type="submit" class="btn btn-warning"
+                onclick="return confirm('This will clear current assignments and recalculate. Proceed?')">
+            <i class="bi bi-cpu"></i> Run Auto-Assignment
+        </button>
+    </form>
+</div>
+
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Malshab)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Assignment)
-            </th>
-            <th></th>
+            <th>Malshab Name</th>
+            <th>Assignment Name</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
+                <td>@Html.DisplayFor(modelItem => item.Malshab.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Assignment.Name)</td>
                 <td>
-                    @if (item.Malshab != null)
-                    {
-                        @Html.DisplayFor(modelItem => item.Malshab.Name)
-                    }
-                    else
-                    {
-                        <span class="text-danger">Malshab Data Missing</span>
-                    }
-                </td>
-                <td>
-                    @if (item.Assignment != null)
-                    {
-                        @Html.DisplayFor(modelItem => item.Assignment.Name)
-                    }
-                    else
-                    {
-                        <span class="text-danger">Assignment Data Missing</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Remove</a>
                 </td>
             </tr>
         }
