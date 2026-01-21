@@ -31,17 +31,66 @@ namespace UniFilteringproject.Controllers
         // GET: Malshabs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-            // Fix: Added Include and ThenInclude so you can see the Names of the assignments this Malshab has
             var malshab = await _context.Malshabs
-                .Include(m => m.MalAssignedList)
-                    .ThenInclude(ma => ma.Assignment)
+                .Include(m => m.MalAbis)
+                    .ThenInclude(ma => ma.ability)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (malshab == null) return NotFound();
+            if (malshab == null)
+            {
+                return NotFound();
+            }
+
+            // Load all assignments so the user can choose which to block
+            ViewBag.Assignments = await _context.Assignments.ToListAsync();
+
+            // Load the IDs of assignments currently blocked for this Malshab
+            ViewBag.BlockedAssignmentIds = await _context.MalBlocks
+                .Where(b => b.MalshabId == id)
+                .Select(b => b.AssignmentId)
+                .ToListAsync();
 
             return View(malshab);
+        }
+
+        // POST: Malshabs/ToggleBlock
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleBlock(int malshabId, int assignmentId)
+        {
+            if (malshabId <= 0 || assignmentId <= 0)
+            {
+                return BadRequest();
+            }
+
+            // Check if a block already exists
+            var existingBlock = await _context.MalBlocks
+                .FirstOrDefaultAsync(b => b.MalshabId == malshabId && b.AssignmentId == assignmentId);
+
+            if (existingBlock != null)
+            {
+                // If it exists, remove it (Unblock)
+                _context.MalBlocks.Remove(existingBlock);
+            }
+            else
+            {
+                // If it doesn't exist, create it (Block)
+                _context.MalBlocks.Add(new MalBlock
+                {
+                    MalshabId = malshabId,
+                    AssignmentId = assignmentId
+                });
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Redirect back to the details page to see the updated status
+            return RedirectToAction(nameof(Details), new { id = malshabId });
         }
 
         // GET: Malshabs/Create

@@ -16,7 +16,6 @@ namespace UniFilteringproject.Data
         public DbSet<UniFilteringproject.Models.MalAbi> MalAbi { get; set; } = default!;
         public DbSet<UniFilteringproject.Models.AssAbi> AssAbi { get; set; } = default!;
         public DbSet<UniFilteringproject.Models.MalAss> MalAss { get; set; } = default!;
-        // Add DbSet<TEntity> properties here, for example:
-        // public DbSet<YourEntity> YourEntities { get; set; }
+        public DbSet<MalBlock> MalBlocks { get; set; }
     }
 }

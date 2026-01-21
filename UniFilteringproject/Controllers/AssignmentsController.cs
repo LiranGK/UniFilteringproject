@@ -26,16 +26,24 @@ namespace UniFilteringProject.Controllers
                 .ToListAsync());
         }
 
+        // GET: Assignments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
 
+            // We include AssAbis (the link) and then the actual Ability (the name/type)
             var assignment = await _context.Assignments
-                .Include(a => a.MalAssignedList)
-                    .ThenInclude(ma => ma.Malshab)
+                .Include(a => a.AssAbis)
+                    .ThenInclude(aa => aa.ability)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (assignment == null) return NotFound();
+            if (assignment == null)
+            {
+                return NotFound();
+            }
 
             return View(assignment);
         }

@@ -11,7 +11,7 @@ using UniFilteringproject.Data;
 namespace UniFilteringProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260112115430_InitialMig")]
+    [Migration("20260121140438_InitialMig")]
     partial class InitialMig
     {
         /// <inheritdoc />
@@ -142,6 +142,29 @@ namespace UniFilteringProject.Migrations
                     b.ToTable("MalAss");
                 });
 
+            modelBuilder.Entity("UniFilteringproject.Models.MalBlock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AssignmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MalshabId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignmentId");
+
+                    b.HasIndex("MalshabId");
+
+                    b.ToTable("MalBlocks");
+                });
+
             modelBuilder.Entity("UniFilteringproject.Models.Malshab", b =>
                 {
                     b.Property<int>("Id")
@@ -205,21 +228,40 @@ namespace UniFilteringProject.Migrations
 
             modelBuilder.Entity("UniFilteringproject.Models.MalAss", b =>
                 {
-                    b.HasOne("UniFilteringproject.Models.Assignment", "assignment")
+                    b.HasOne("UniFilteringproject.Models.Assignment", "Assignment")
                         .WithMany("MalAssignedList")
                         .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("UniFilteringproject.Models.Malshab", "malshab")
+                    b.HasOne("UniFilteringproject.Models.Malshab", "Malshab")
                         .WithMany("MalAssignedList")
                         .HasForeignKey("MalshabId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("assignment");
+                    b.Navigation("Assignment");
 
-                    b.Navigation("malshab");
+                    b.Navigation("Malshab");
+                });
+
+            modelBuilder.Entity("UniFilteringproject.Models.MalBlock", b =>
+                {
+                    b.HasOne("UniFilteringproject.Models.Assignment", "Assignment")
+                        .WithMany()
+                        .HasForeignKey("AssignmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UniFilteringproject.Models.Malshab", "Malshab")
+                        .WithMany()
+                        .HasForeignKey("MalshabId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Assignment");
+
+                    b.Navigation("Malshab");
                 });
 
             modelBuilder.Entity("UniFilteringproject.Models.Assignment", b =>

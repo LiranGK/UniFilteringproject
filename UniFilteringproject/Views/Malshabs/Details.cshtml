@@ -1,36 +1,66 @@
 ﻿@model UniFilteringproject.Models.Malshab
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Malshab Details";
+    var assignments = ViewBag.Assignments as List<UniFilteringproject.Models.Assignment>;
+    var blockedIds = ViewBag.BlockedAssignmentIds as List<int>;
 }
 
-<h1>Details</h1>
+<h1>Details for @Model.Name</h1>
 
 <div>
-    <h4>Malshab</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Dapar)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Dapar)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Profile)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Profile)
-        </dd>
+        <dt class="col-sm-2">Dapar</dt>
+        <dd class="col-sm-10">@Model.Dapar</dd>
+        <dt class="col-sm-2">Profile</dt>
+        <dd class="col-sm-10">@Model.Profile</dd>
     </dl>
 </div>
+
+<hr />
+
+<h3>Assignment Blockages</h3>
+<p class="text-muted">Blocked assignments will be ignored during the Auto-Assignment process for this person.</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Assignment Name</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in assignments)
+        {
+            bool isBlocked = blockedIds.Contains(item.Id);
+            <tr>
+                <td>@item.Name</td>
+                <td>
+                    @if (isBlocked)
+                    {
+                        <span class="badge bg-danger">Blocked</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Available</span>
+                    }
+                </td>
+                <td>
+                    <form asp-action="ToggleBlock" method="post">
+                        <input type="hidden" name="malshabId" value="@Model.Id" />
+                        <input type="hidden" name="assignmentId" value="@item.Id" />
+                        <button type="submit" class="btn btn-sm @(isBlocked ? "btn-outline-success" : "btn-outline-danger")">
+                            @(isBlocked ? "Unblock" : "Block")
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>

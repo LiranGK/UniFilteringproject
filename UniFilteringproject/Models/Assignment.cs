@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UniFilteringproject.Models
@@ -11,14 +12,14 @@ namespace UniFilteringproject.Models
         public int ProfileNeeded { get; set; }
         public int MinMalshabs { get; set; }
 
-
-        // Navigation property to the junction table
-        // This MUST match the name in your ApplicationDbContext
+        // Navigation property to the junction table for assigned Malshabs
         public virtual ICollection<MalAss> MalAssignedList { get; set; } = new List<MalAss>();
 
-        // CALCULATED PROPERTIES
-        // [NotMapped] tells Entity Framework not to create a column in the DB for these
+        // Navigation property for required Abilities
+        // This allows the Details view to see what abilities this unit needs
+        public virtual ICollection<AssAbi> AssAbis { get; set; } = new List<AssAbi>();
 
+        // CALCULATED PROPERTIES
         [NotMapped]
         public int CurrMalAssinged => MalAssignedList?.Count ?? 0;
 

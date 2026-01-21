@@ -134,6 +134,32 @@ namespace UniFilteringProject.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MalBlocks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MalshabId = table.Column<int>(type: "int", nullable: false),
+                    AssignmentId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MalBlocks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MalBlocks_Assignments_AssignmentId",
+                        column: x => x.AssignmentId,
+                        principalTable: "Assignments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MalBlocks_Malshabs_MalshabId",
+                        column: x => x.MalshabId,
+                        principalTable: "Malshabs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AssAbi_AbilityId",
                 table: "AssAbi",
@@ -163,6 +189,16 @@ namespace UniFilteringProject.Migrations
                 name: "IX_MalAss_MalshabId",
                 table: "MalAss",
                 column: "MalshabId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MalBlocks_AssignmentId",
+                table: "MalBlocks",
+                column: "AssignmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MalBlocks_MalshabId",
+                table: "MalBlocks",
+                column: "MalshabId");
         }
 
         /// <inheritdoc />
@@ -176,6 +212,9 @@ namespace UniFilteringProject.Migrations
 
             migrationBuilder.DropTable(
                 name: "MalAss");
+
+            migrationBuilder.DropTable(
+                name: "MalBlocks");
 
             migrationBuilder.DropTable(
                 name: "Abilities");
