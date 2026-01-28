@@ -19,9 +19,9 @@ namespace UniFilteringproject.Data
             {
                 context.Abilities.AddRange(new List<Ability>
                 {
-                    new Ability { Name = "Leadership" },
-                    new Ability { Name = "Stamina" },
-                    new Ability { Name = "Technical" }
+                    new Ability { Name = "Leadership", Description = "temp" },
+                    new Ability { Name = "Stamina", Description = "temp" },
+                    new Ability { Name = "Technical", Description = "temp" }
                 });
                 context.SaveChanges();
             }
@@ -48,14 +48,16 @@ namespace UniFilteringproject.Data
                         Name = "Paramedic",
                         DaparNeeded = 60,
                         ProfileNeeded = 64,
-                        MinMalshabs = 2
+                        MinMalshabs = 2,
+                        Description = "temp"
                     },
                     new Assignment
                     {
                         Name = "Fighter",
                         DaparNeeded = 10,
                         ProfileNeeded = 72,
-                        MinMalshabs = 3
+                        MinMalshabs = 3,
+                        Description = "temp"
                     }
                 });
                 context.SaveChanges();

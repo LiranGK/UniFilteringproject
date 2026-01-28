@@ -34,6 +34,7 @@
         <tr>
             <th>Malshab Name</th>
             <th>Assigned Unit</th>
+            <th>Source</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -48,6 +49,16 @@
                     @item.Assignment.Name
                 </td>
                 <td>
+                    @if (item.AssignedBy == "Algorithm")
+                    {
+                        <span class="badge bg-info">Auto</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Manual</span>
+                    }
+                </td>
+                <td>
                     <div class="btn-group" role="group">
                         <a asp-controller="Malshabs" asp-action="Details" asp-route-id="@item.MalshabId" class="btn btn-sm btn-outline-info">
                             View Malshab
@@ -55,7 +66,7 @@
                         <a asp-controller="Assignments" asp-action="Details" asp-route-id="@item.AssignmentId" class="btn btn-sm btn-outline-primary">
                             View Assignment
                         </a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Remove</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
                     </div>
                 </td>
             </tr>

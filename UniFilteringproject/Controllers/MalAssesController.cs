@@ -41,6 +41,7 @@ namespace UniFilteringproject.Controllers
             return View(malAss);
         }
 
+        // GET: MalAsses/Create
         public IActionResult Create()
         {
             ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Name");
@@ -48,16 +49,26 @@ namespace UniFilteringproject.Controllers
             return View();
         }
 
+        // POST: MalAsses/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,MalshabId,AssignmentId")] MalAss malAss)
+        public async Task<IActionResult> Create([Bind("MalshabId,AssignmentId")] MalAss malAss)
         {
+            // Set the source manually
+            malAss.AssignedBy = "Manual";
+
+            // We clear errors for navigation properties and AssignedBy because they are set server-side
+            ModelState.Remove("Malshab");
+            ModelState.Remove("Assignment");
+            ModelState.Remove("AssignedBy");
+
             if (ModelState.IsValid)
             {
                 _context.Add(malAss);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Name", malAss.AssignmentId);
             ViewData["MalshabId"] = new SelectList(_context.Malshabs, "Id", "Name", malAss.MalshabId);
             return View(malAss);
@@ -146,20 +157,28 @@ namespace UniFilteringproject.Controllers
             var allAssignments = await _context.Assignments.ToListAsync();
             var allRequirements = await _context.AssAbi.ToListAsync();
             var existingAssignments = await _context.MalAss.ToListAsync();
+            // Note: Ensuring we use the correct model name 'MalshabBlocks' as per your latest context
             var allBlocks = await _context.MalBlocks.ToListAsync();
 
             // 2. Setup Tracking (Preserve existing)
             var currentTracking = allAssignments.ToDictionary(a => a.Id, a => new List<Malshab>());
             var globalAssignedIds = new HashSet<int>();
 
+            // NEW: Keep track of which Malshab IDs were manually assigned
+            var manualAssignedIds = new HashSet<int>();
+
             foreach (var existing in existingAssignments)
             {
                 var malshab = allMalshabs.FirstOrDefault(m => m.Id == existing.MalshabId);
-                // Ensure the malshab exists and isn't already processed (Fixing potential duplicates)
+                // Ensure the malshab exists and isn't already processed
                 if (malshab != null && currentTracking.ContainsKey(existing.AssignmentId) && !globalAssignedIds.Contains(malshab.Id))
                 {
                     currentTracking[existing.AssignmentId].Add(malshab);
                     globalAssignedIds.Add(malshab.Id);
+
+                    // If it was already in the DB, it's considered Manual (or was previously set as Manual)
+                    // We preserve this status.
+                    manualAssignedIds.Add(malshab.Id);
                 }
             }
 
@@ -184,7 +203,6 @@ namespace UniFilteringproject.Controllers
                 int needed = item.Assignment.MinMalshabs - currentCount;
                 if (needed > 0)
                 {
-                    // Filter pool again to ensure no one assigned in previous iterations of this loop is picked
                     var toAssign = item.Pool.Where(p => !globalAssignedIds.Contains(p.Id)).Take(needed).ToList();
                     foreach (var m in toAssign)
                     {
@@ -223,7 +241,6 @@ namespace UniFilteringproject.Controllers
                     {
                         if (currentCount >= target.MinMalshabs) break;
 
-                        // Move the malshab correctly between lists
                         var malToMove = currentTracking[c.SourceId].First(m => m.Id == c.Malshab.Id);
                         currentTracking[c.SourceId].Remove(malToMove);
                         currentTracking[target.Id].Add(malToMove);
@@ -250,7 +267,7 @@ namespace UniFilteringproject.Controllers
                 }
             }
 
-            // NEW: Quota Check/Message Logic
+            // Messages Logic
             var failedAssignments = allAssignments
                 .Where(a => currentTracking[a.Id].Count < a.MinMalshabs)
                 .Select(a => a.Name)
@@ -273,7 +290,13 @@ namespace UniFilteringproject.Controllers
             {
                 foreach (var m in kvp.Value)
                 {
-                    _context.MalAss.Add(new MalAss { MalshabId = m.Id, AssignmentId = kvp.Key });
+                    _context.MalAss.Add(new MalAss
+                    {
+                        MalshabId = m.Id,
+                        AssignmentId = kvp.Key,
+                        // NEW: Logic to set the source
+                        AssignedBy = manualAssignedIds.Contains(m.Id) ? "Manual" : "Algorithm"
+                    });
                 }
             }
 

@@ -29,6 +29,10 @@ namespace UniFilteringProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -74,6 +78,10 @@ namespace UniFilteringProject.Migrations
 
                     b.Property<int>("DaparNeeded")
                         .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MinMalshabs")
                         .HasColumnType("int");
@@ -123,6 +131,10 @@ namespace UniFilteringProject.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AssignedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("AssignmentId")
                         .HasColumnType("int");
@@ -194,7 +206,7 @@ namespace UniFilteringProject.Migrations
                         .IsRequired();
 
                     b.HasOne("UniFilteringproject.Models.Assignment", "assignment")
-                        .WithMany()
+                        .WithMany("AssAbis")
                         .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -263,6 +275,8 @@ namespace UniFilteringProject.Migrations
 
             modelBuilder.Entity("UniFilteringproject.Models.Assignment", b =>
                 {
+                    b.Navigation("AssAbis");
+
                     b.Navigation("MalAssignedList");
                 });
 

@@ -11,6 +11,7 @@ namespace UniFilteringproject.Models
         public int DaparNeeded { get; set; }
         public int ProfileNeeded { get; set; }
         public int MinMalshabs { get; set; }
+        public string Description { get; set; }
 
         // Navigation property to the junction table for assigned Malshabs
         public virtual ICollection<MalAss> MalAssignedList { get; set; } = new List<MalAss>();

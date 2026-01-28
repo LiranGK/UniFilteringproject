@@ -34,10 +34,11 @@ namespace UniFilteringProject.Controllers
                 return NotFound();
             }
 
-            // We include AssAbis (the link) and then the actual Ability (the name/type)
             var assignment = await _context.Assignments
                 .Include(a => a.AssAbis)
                     .ThenInclude(aa => aa.ability)
+                .Include(a => a.MalAssignedList)
+                    .ThenInclude(ma => ma.Malshab)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (assignment == null)
