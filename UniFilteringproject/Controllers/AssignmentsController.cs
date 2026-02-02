@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using UniFilteringproject.Models;
 
 namespace UniFilteringProject.Controllers
 {
+    [Authorize(Roles = "Admin,Moderator")]
     public class AssignmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -53,7 +55,7 @@ namespace UniFilteringProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,DaparNeeded,ProfileNeeded,MinMalshabs")] Assignment assignment)
+        public async Task<IActionResult> Create([Bind("Id,Name,DaparNeeded,ProfileNeeded,MinMalshabs,Description")] Assignment assignment)
         {
             if (ModelState.IsValid)
             {
@@ -74,7 +76,7 @@ namespace UniFilteringProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DaparNeeded,ProfileNeeded,MinMalshabs")] Assignment assignment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DaparNeeded,ProfileNeeded,MinMalshabs,Description")] Assignment assignment)
         {
             if (id != assignment.Id) return NotFound();
 

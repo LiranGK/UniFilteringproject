@@ -1,32 +1,35 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using UniFilteringproject.Data;
 using UniFilteringproject.Models;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace UniFilteringproject.Data
 {
     public static class SeedData
     {
-        public static void Initialize(ApplicationDbContext context)
+        // 1. Initialize for App Data
+        public static async Task Initialize(IServiceProvider serviceProvider, ApplicationDbContext context)
         {
-            // Ensures the database exists and schema is created
             context.Database.Migrate();
 
-            // 1. Seed Abilities
+            // 2. Seed Abilities
             if (!context.Abilities.Any())
             {
                 context.Abilities.AddRange(new List<Ability>
                 {
-                    new Ability { Name = "Leadership", Description = "temp" },
-                    new Ability { Name = "Stamina", Description = "temp" },
-                    new Ability { Name = "Technical", Description = "temp" }
+                    new Ability { Name = "Leadership", Description = "Capacity to lead teams" },
+                    new Ability { Name = "Stamina", Description = "Physical endurance" },
+                    new Ability { Name = "Technical", Description = "Technical and engineering skills" }
                 });
                 context.SaveChanges();
             }
 
-            // 2. Seed Malshabs (Candidates)
+            // 3. Seed Malshabs
             if (!context.Malshabs.Any())
             {
                 context.Malshabs.AddRange(new List<Malshab>
@@ -38,110 +41,114 @@ namespace UniFilteringproject.Data
                 context.SaveChanges();
             }
 
-            // 3. Seed Assignments (Jobs/Roles)
+            // 4. Seed Assignments
             if (!context.Assignments.Any())
             {
                 context.Assignments.AddRange(new List<Assignment>
                 {
-                    new Assignment
-                    {
-                        Name = "Paramedic",
-                        DaparNeeded = 60,
-                        ProfileNeeded = 64,
-                        MinMalshabs = 2,
-                        Description = "temp"
-                    },
-                    new Assignment
-                    {
-                        Name = "Fighter",
-                        DaparNeeded = 10,
-                        ProfileNeeded = 72,
-                        MinMalshabs = 3,
-                        Description = "temp"
-                    }
+                    new Assignment { Name = "Paramedic", DaparNeeded = 60, ProfileNeeded = 64, MinMalshabs = 2, Description = "Medical responder" },
+                    new Assignment { Name = "Fighter", DaparNeeded = 10, ProfileNeeded = 72, MinMalshabs = 3, Description = "Combat personnel" }
                 });
                 context.SaveChanges();
             }
 
-            // Retrieve the data we just saved to get their generated Database IDs
             var malshabs = context.Malshabs.ToList();
             var assignments = context.Assignments.ToList();
             var abilities = context.Abilities.ToList();
 
-            // 4. Seed MalAss (Assign Malshabs to Jobs)[currently not needed]
-            if (!context.MalAss.Any())
-            {
-             
-            }
-
-            // 5. Seed MalAbi (Candidate Ability Levels)
+            // 5. Seed Malshab Abilities (Ensure context.MalAbis is the correct property name)
             if (!context.MalAbi.Any())
             {
-                // Ariel has Leadership Level 4
-                context.MalAbi.Add(new MalAbi
+                context.MalAbi.AddRange(new List<MalAbi>
                 {
-                    MalshabId = malshabs[0].Id,
-                    AbilityId = abilities[0].Id, // Leadership
-                    AbiLevel = 4
-                });
-                // Ariel has Stamina Level 4
-                context.MalAbi.Add(new MalAbi
-                {
-                    MalshabId = malshabs[0].Id,
-                    AbilityId = abilities[1].Id, // Leadership
-                    AbiLevel = 4
-                });
-                // Liran has Leadership Level 5
-                context.MalAbi.Add(new MalAbi
-                {
-                    MalshabId = malshabs[1].Id,
-                    AbilityId = abilities[0].Id, // Leadership
-                    AbiLevel = 5
-                });
-                // Liran has Stamina Level 4
-                context.MalAbi.Add(new MalAbi
-                {
-                    MalshabId = malshabs[1].Id,
-                    AbilityId = abilities[1].Id, // Leadership
-                    AbiLevel = 4
-                });
-                // Eli has Leadership Level 3
-                context.MalAbi.Add(new MalAbi
-                {
-                    MalshabId = malshabs[2].Id,
-                    AbilityId = abilities[0].Id, // Leadership
-                    AbiLevel = 3
-                });
-                // Eli has Stamina Level 2
-                context.MalAbi.Add(new MalAbi
-                {
-                    MalshabId = malshabs[2].Id,
-                    AbilityId = abilities[1].Id, // Leadership
-                    AbiLevel = 2
+                    new MalAbi { MalshabId = malshabs[0].Id, AbilityId = abilities[0].Id, AbiLevel = 4 },
+                    new MalAbi { MalshabId = malshabs[0].Id, AbilityId = abilities[1].Id, AbiLevel = 4 },
+                    new MalAbi { MalshabId = malshabs[1].Id, AbilityId = abilities[0].Id, AbiLevel = 5 },
+                    new MalAbi { MalshabId = malshabs[1].Id, AbilityId = abilities[1].Id, AbiLevel = 4 },
+                    new MalAbi { MalshabId = malshabs[2].Id, AbilityId = abilities[0].Id, AbiLevel = 3 },
+                    new MalAbi { MalshabId = malshabs[2].Id, AbilityId = abilities[1].Id, AbiLevel = 2 }
                 });
             }
 
-            // 6. Seed AssAbi (Assignment Ability Requirements)
+            // 6. Seed Assignment Requirements
             if (!context.AssAbi.Any())
             {
-                // Paramedic requires Leadership (Level 4)
-                context.AssAbi.Add(new AssAbi
+                context.AssAbi.AddRange(new List<AssAbi>
                 {
-                    AssignmentId = assignments[0].Id,
-                    AbilityId = abilities[0].Id,
-                    AbiLevel = 4
-                });
-
-                // Fighter requires Stamina (Level 3)
-                context.AssAbi.Add(new AssAbi
-                {
-                    AssignmentId = assignments[1].Id,
-                    AbilityId = abilities[1].Id,
-                    AbiLevel = 3
+                    new AssAbi { AssignmentId = assignments[0].Id, AbilityId = abilities[0].Id, AbiLevel = 4 },
+                    new AssAbi { AssignmentId = assignments[1].Id, AbilityId = abilities[1].Id, AbiLevel = 3 }
                 });
             }
 
             context.SaveChanges();
+        }
+
+        // 7. Separate Identity Seeding logic to match your Program.cs call
+        public static async Task InitializeIdentity(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            // Ensure roles exist
+            string[] roleNames = { "Admin", "Moderator", "DataInputer" };
+            foreach (var roleName in roleNames)
+            {
+                if (!await roleManager.RoleExistsAsync(roleName))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            // Dictionary format: Email -> (FullName, Role, Password)
+            var usersToSeed = new Dictionary<string, (string FullName, string Role, string Password)>
+            {
+                { "roie@admin.com", ("RoieAlima", "Admin", "IAmGod<3") },
+                { "mod1@example.com", ("ModeratorOne", "Moderator", "User123!") },
+                { "mod2@example.com", ("ModeratorTwo", "Moderator", "User123!") },
+                { "data1@example.com", ("DataEntryUser", "DataInputer", "User123!") },
+                { "data2@example.com", ("DataEntryAssistant", "DataInputer", "User123!") }
+            };
+
+            foreach (var entry in usersToSeed)
+            {
+                var userEmail = entry.Key;
+                var (fullName, role, password) = entry.Value;
+
+                var user = await userManager.FindByEmailAsync(userEmail);
+                if (user == null)
+                {
+                    user = new ApplicationUser
+                    {
+                        // CRITICAL: UserName must be the Email for default Identity Login to work
+                        UserName = userEmail,
+                        Email = userEmail,
+                        FullName = fullName,
+                        EmailConfirmed = true
+                    };
+
+                    var result = await userManager.CreateAsync(user, password);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(user, role);
+                    }
+                }
+                else
+                {
+                    // REPAIR LOGIC: Ensure the UserName and Normalized fields are synced with the Email
+                    bool needsUpdate = false;
+
+                    if (user.UserName != userEmail)
+                    {
+                        user.UserName = userEmail;
+                        needsUpdate = true;
+                    }
+
+                    if (needsUpdate)
+                    {
+                        // This updates the NormalizedUserName and NormalizedEmail fields in the DB
+                        await userManager.UpdateAsync(user);
+                        await userManager.UpdateNormalizedUserNameAsync(user);
+                        await userManager.UpdateNormalizedEmailAsync(user);
+                    }
+                }
+            }
         }
     }
 }

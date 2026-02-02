@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using UniFilteringproject.Models;
 
 namespace UniFilteringproject.Controllers
 {
+    [Authorize(Roles = "Admin,Moderator")]
     public class MalAssesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,10 +23,12 @@ namespace UniFilteringproject.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.MalAss
-                .Include(m => m.Malshab)
+            var assignments = await _context.MalAss
                 .Include(m => m.Assignment)
-                .ToListAsync());
+                .Include(m => m.Malshab)
+                .ToListAsync();
+            ViewBag.HasAlgoAssignments = assignments.Any(a => a.AssignedBy == "Algorithm");
+            return View(assignments);
         }
 
         public async Task<IActionResult> Details(int? id)

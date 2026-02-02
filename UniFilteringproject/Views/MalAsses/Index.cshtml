@@ -2,6 +2,13 @@
 
 @{
     ViewData["Title"] = "Assignments List";
+    // Check if the ViewBag has the indicator from the controller
+    bool hasAlgo = ViewBag.HasAlgoAssignments ?? false;
+
+    // Authorization logic for the view
+    bool isAdminOrRoie = User.IsInRole("Admin") || User.Identity.Name == "roie@admin.com";
+    bool isModerator = User.IsInRole("Moderator");
+    bool isDataInputer = User.IsInRole("DataInputer");
 }
 
 <h1>Current Assignments</h1>
@@ -16,18 +23,32 @@
 }
 
 <div class="mb-3">
-    <a asp-action="Create" class="btn btn-success">Manual Assignment</a>
 
-    <form asp-action="RunAutoAssignment" method="post" style="display:inline;">
-        <button type="submit" class="btn btn-primary">Run Auto-Assignment</button>
-    </form>
+        <a asp-action="Create" class="btn btn-success">Manual Assignment</a>
 
-    <form asp-action="ClearAssignments" method="post" style="display:inline;">
-        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to clear all assignments?');">
-            Clear All Assignments
-        </button>
-    </form>
+    @if (isAdminOrRoie)
+    {
+        <form asp-action="RunAutoAssignment" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-primary" @(hasAlgo ? "disabled" : "")
+                    title="@(hasAlgo ? "Algorithm assignments already exist. Clear them to re-run." : "Run auto-assignment logic")">
+                Run Auto-Assignment
+            </button>
+        </form>
+
+        <form asp-action="ClearAssignments" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to clear all assignments?');">
+                Clear All Assignments
+            </button>
+        </form>
+    }
 </div>
+
+@if (hasAlgo)
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Automatic assignments are currently active. To recalculate, please clear all assignments first.
+    </div>
+}
 
 <table class="table table-striped">
     <thead>
@@ -42,20 +63,20 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @item.Malshab.Name
-                </td>
-                <td>
-                    @item.Assignment.Name
-                </td>
+                <td>@item.Malshab.Name</td>
+                <td>@item.Assignment.Name</td>
                 <td>
                     @if (item.AssignedBy == "Algorithm")
                     {
                         <span class="badge bg-info">Auto</span>
                     }
-                    else
+                    else if (item.AssignedBy == "Manual")
                     {
                         <span class="badge bg-secondary">Manual</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-light text-dark">Unknown</span>
                     }
                 </td>
                 <td>
@@ -66,7 +87,10 @@
                         <a asp-controller="Assignments" asp-action="Details" asp-route-id="@item.AssignmentId" class="btn btn-sm btn-outline-primary">
                             View Assignment
                         </a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                        @if (isAdminOrRoie || isModerator || isDataInputer)
+                        {
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                        }
                     </div>
                 </td>
             </tr>
