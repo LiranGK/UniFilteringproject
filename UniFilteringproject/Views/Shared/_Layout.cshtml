@@ -24,7 +24,7 @@
                         </li>
 
                         @* Malshab & MalAbi: Accessible by DataInputer, Moderator, Admin *@
-                        @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("Moderator") || User.IsInRole("DataInputer")))
+                        @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("DataInputer")))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Malshabs" asp-action="Index">Malshabs</a>
@@ -50,9 +50,16 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="MalAsses" asp-action="Index">Assigned Malshabs</a>
                             </li>
                         }
+                        @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Accounts Managements</a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
+                
             </div>
         </nav>
     </header>

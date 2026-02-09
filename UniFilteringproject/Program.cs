@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UniFilteringproject.Data;
 using UniFilteringproject.Models;
+using UniFilteringProject.Areas.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

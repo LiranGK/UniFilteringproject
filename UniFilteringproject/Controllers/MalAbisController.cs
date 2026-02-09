@@ -11,7 +11,7 @@ using UniFilteringproject.Models;
 
 namespace UniFilteringproject.Controllers
 {
-    [Authorize(Roles = "Admin,Moderator,DataInputer")]
+    [Authorize(Roles = "Admin,DataInputer")]
     public class MalAbisController : Controller
     {
         private readonly ApplicationDbContext _context;

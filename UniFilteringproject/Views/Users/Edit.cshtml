@@ -1,0 +1,43 @@
+﻿@model UniFilteringproject.Controllers.EditUserViewModel
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<h1>Edit User Account</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserId" />
+
+            <div class="mb-3">
+                <label class="form-label">Email (Username)</label>
+                <input asp-for="Email" class="form-control" readonly />
+                <small class="text-muted">Username cannot be changed.</small>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input asp-for="FullName" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Role</label>
+                <select asp-for="CurrentRole" class="form-select">
+                    @foreach (var role in ViewBag.Roles)
+                    {
+                        <option value="@role">@role</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

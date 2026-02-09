@@ -1,8 +1,339 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    Layout = "_Layout";
+    ViewData["Title"] = "IDF Placement Portal";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    :root {
+        --idf-navy: #002347;
+        --idf-blue: #0056b3;
+        --idf-cyan: #00d4ff;
+        --idf-light-bg: #f0f4f8;
+        --idf-white: #ffffff;
+        --idf-danger: #ff4d4d;
+        --idf-warning: #ffcc00;
+        --idf-success: #28a745;
+    }
+
+    body {
+        background-color: var(--idf-light-bg);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .hero-banner {
+        background: linear-gradient(135deg, var(--idf-navy) 0%, var(--idf-blue) 100%);
+        color: white;
+        padding: 60px 0;
+        border-bottom-left-radius: 60px;
+        border-bottom-right-radius: 60px;
+        box-shadow: 0 10px 30px rgba(0,35,71,0.3);
+        margin-bottom: -40px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card {
+        background: white;
+        border: none;
+        border-radius: 25px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        height: 100%;
+        position: relative;
+        z-index: 2;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #6c757d;
+        letter-spacing: 1px;
+    }
+
+    .stat-value {
+        font-size: 2.2rem;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .action-card {
+        background: white;
+        border: none;
+        border-radius: 25px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .action-card:hover:not(.locked-card) {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,86,179,0.1);
+        }
+
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        background: var(--idf-light-bg);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        color: var(--idf-navy);
+        font-size: 1.8rem;
+    }
+
+    .btn-idf {
+        background-color: var(--idf-navy);
+        color: white !important;
+        border-radius: 50px;
+        padding: 10px 20px;
+        font-weight: 700;
+        border: none;
+        transition: 0.3s;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        display: inline-block;
+        text-decoration: none;
+        text-align: center;
+    }
+
+        .btn-idf:hover {
+            background-color: var(--idf-cyan);
+            color: var(--idf-navy) !important;
+        }
+
+        .btn-idf.disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+    .algo-card {
+        background: var(--idf-navy);
+        color: white;
+    }
+
+        .algo-card .icon-box {
+            background: rgba(255,255,255,0.1);
+            color: var(--idf-cyan);
+        }
+
+    .locked-card {
+        opacity: 0.7;
+        background-color: #f8f9fa;
+        border: 2px dashed #dee2e6;
+    }
+
+    .extra-small {
+        font-size: 0.75rem;
+    }
+</style>
+
+<div class="hero-banner">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8 text-center text-md-start">
+                <h1 class="display-4 fw-bold mb-2">Command Dashboard</h1>
+                <p class="lead opacity-75">IDF Placement Portal • Official Administration Console</p>
+            </div>
+        </div>
+    </div>
 </div>
+
+<div class="container pb-5">
+    <!-- Real-time Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="stat-card p-4">
+                <div class="stat-label">Total Malshabs</div>
+                <div class="stat-value text-primary">@ViewBag.TotalMalshabs</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card p-4">
+                <div class="stat-label">Unassigned</div>
+                <div class="stat-value text-danger">@ViewBag.UnassignedCount</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card p-4">
+                <div class="stat-label">Total Units</div>
+                <div class="stat-value text-primary">@ViewBag.TotalAssignments</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card p-4">
+                <div class="stat-label">Critical Staffing</div>
+                <div class="stat-value text-warning">@ViewBag.BelowMinCount</div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="fw-bold mb-4">Core Management</h2>
+    <div class="row g-4 mb-5">
+
+        @* 1. Malshabs (Admin/DataInputer) *@
+        <div class="col-lg-4 col-md-6">
+            @{
+                bool canAccessMalshabs = !User.Identity.IsAuthenticated || (User.IsInRole("Admin") || User.IsInRole("DataInputer"));
+            }
+            <div class="action-card p-4 @(User.Identity.IsAuthenticated && !canAccessMalshabs ? "locked-card" : "")">
+                <div class="icon-box"><i class="bi bi-people-fill"></i></div>
+                <h4 class="fw-bold">Malshabs</h4>
+                <p class="text-muted small flex-grow-1">Central database of all candidates. Manage personal info and scores.</p>
+
+                @if (User.Identity.IsAuthenticated && !canAccessMalshabs)
+                {
+                    <div class="alert alert-secondary py-1 px-2 extra-small mb-2"><i class="bi bi-lock-fill me-1"></i> Admin/Inputer Only</div>
+                }
+                <a asp-controller="Malshabs" asp-action="Index" class="btn btn-idf w-100 @(User.Identity.IsAuthenticated && !canAccessMalshabs ? "disabled" : "")">Open Database</a>
+            </div>
+        </div>
+
+        @* 2. Candidate Abilities (Admin/DataInputer) *@
+        <div class="col-lg-4 col-md-6">
+            @{
+                bool canAccessMalAbis = !User.Identity.IsAuthenticated || (User.IsInRole("Admin") || User.IsInRole("DataInputer"));
+            }
+            <div class="action-card p-4 @(User.Identity.IsAuthenticated && !canAccessMalAbis ? "locked-card" : "")">
+                <div class="icon-box"><i class="bi bi-star-fill"></i></div>
+                <h4 class="fw-bold">Candidate Abilities</h4>
+                <p class="text-muted small flex-grow-1">Assign specific ability levels to individual Malshabs based on tests.</p>
+
+                @if (User.Identity.IsAuthenticated && !canAccessMalAbis)
+                {
+                    <div class="alert alert-secondary py-1 px-2 extra-small mb-2"><i class="bi bi-lock-fill me-1"></i> Admin/Inputer Only</div>
+                }
+                <a asp-controller="MalAbis" asp-action="Index" class="btn btn-idf w-100 @(User.Identity.IsAuthenticated && !canAccessMalAbis ? "disabled" : "")">Manage Levels</a>
+            </div>
+        </div>
+
+        @* 3. Accounts (Admin Only) *@
+        <div class="col-lg-4 col-md-6">
+            @{
+                bool canAccessUsers = !User.Identity.IsAuthenticated || User.IsInRole("Admin");
+            }
+            <div class="action-card p-4 @(User.Identity.IsAuthenticated && !canAccessUsers ? "locked-card" : "")">
+                <div class="icon-box"><i class="bi bi-shield-lock-fill"></i></div>
+                <h4 class="fw-bold">Accounts</h4>
+                <p class="text-muted small flex-grow-1">Manage system users, roles, and security permissions.</p>
+
+                @if (User.Identity.IsAuthenticated && !canAccessUsers)
+                {
+                    <div class="alert alert-secondary py-1 px-2 extra-small mb-2"><i class="bi bi-lock-fill me-1"></i> Admin Role Required</div>
+                }
+                <a asp-controller="Users" asp-action="Index" class="btn btn-idf w-100 @(User.Identity.IsAuthenticated && !canAccessUsers ? "disabled" : "")">User Admin</a>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="fw-bold mb-4">Unit & Assignment Strategy</h2>
+    <div class="row g-4 mb-5">
+
+        @* 4. Abilities Dictionary (Admin/Moderator) *@
+        <div class="col-lg-3 col-md-6">
+            @{
+                bool canAccessAbilities = !User.Identity.IsAuthenticated || (User.IsInRole("Admin") || User.IsInRole("Moderator"));
+            }
+            <div class="action-card p-4 @(User.Identity.IsAuthenticated && !canAccessAbilities ? "locked-card" : "")">
+                <div class="icon-box"><i class="bi bi-list-check"></i></div>
+                <h4 class="fw-bold">Dictionary</h4>
+                <p class="text-muted small flex-grow-1">Define the dictionary of abilities used across the system.</p>
+
+                @if (User.Identity.IsAuthenticated && !canAccessAbilities)
+                {
+                    <div class="alert alert-secondary py-1 px-2 extra-small mb-2"><i class="bi bi-lock-fill me-1"></i> Admin/Mod Only</div>
+                }
+                <a asp-controller="Abilities" asp-action="Index" class="btn btn-idf w-100 @(User.Identity.IsAuthenticated && !canAccessAbilities ? "disabled" : "")">Abilities</a>
+            </div>
+        </div>
+
+        @* 5. Units (Admin/Moderator) *@
+        <div class="col-lg-3 col-md-6">
+            @{
+                bool canAccessUnits = !User.Identity.IsAuthenticated || (User.IsInRole("Admin") || User.IsInRole("Moderator"));
+            }
+            <div class="action-card p-4 @(User.Identity.IsAuthenticated && !canAccessUnits ? "locked-card" : "")">
+                <div class="icon-box"><i class="bi bi-building-fill"></i></div>
+                <h4 class="fw-bold">Units</h4>
+                <p class="text-muted small flex-grow-1">Manage IDF units, their capacity, and minimum staffing.</p>
+
+                @if (User.Identity.IsAuthenticated && !canAccessUnits)
+                {
+                    <div class="alert alert-secondary py-1 px-2 extra-small mb-2"><i class="bi bi-lock-fill me-1"></i> Admin/Mod Only</div>
+                }
+                <a asp-controller="Assignments" asp-action="Index" class="btn btn-idf w-100 @(User.Identity.IsAuthenticated && !canAccessUnits ? "disabled" : "")">Units List</a>
+            </div>
+        </div>
+
+        @* 6. Unit Requirements (Admin/Moderator) *@
+        <div class="col-lg-3 col-md-6">
+            @{
+                bool canAccessNeeds = !User.Identity.IsAuthenticated || (User.IsInRole("Admin") || User.IsInRole("Moderator"));
+            }
+            <div class="action-card p-4 @(User.Identity.IsAuthenticated && !canAccessNeeds ? "locked-card" : "")">
+                <div class="icon-box"><i class="bi bi-mortarboard-fill"></i></div>
+                <h4 class="fw-bold">Needs</h4>
+                <p class="text-muted small flex-grow-1">Set ability prerequisites for each military unit.</p>
+
+                @if (User.Identity.IsAuthenticated && !canAccessNeeds)
+                {
+                    <div class="alert alert-secondary py-1 px-2 extra-small mb-2"><i class="bi bi-lock-fill me-1"></i> Admin/Mod Only</div>
+                }
+                <a asp-controller="AssAbis" asp-action="Index" class="btn btn-idf w-100 @(User.Identity.IsAuthenticated && !canAccessNeeds ? "disabled" : "")">Set Needs</a>
+            </div>
+        </div>
+
+        @* 7. Final Mapping (Admin/Moderator) *@
+        <div class="col-lg-3 col-md-6">
+            @{
+                bool canAccessMapping = !User.Identity.IsAuthenticated || (User.IsInRole("Admin") || User.IsInRole("Moderator"));
+            }
+            <div class="action-card p-4 @(User.Identity.IsAuthenticated && !canAccessMapping ? "locked-card" : "")">
+                <div class="icon-box"><i class="bi bi-check-circle-fill"></i></div>
+                <h4 class="fw-bold">Placements</h4>
+                <p class="text-muted small flex-grow-1">Review the final mapping of Malshabs to units.</p>
+
+                @if (User.Identity.IsAuthenticated && !canAccessMapping)
+                {
+                    <div class="alert alert-secondary py-1 px-2 extra-small mb-2"><i class="bi bi-lock-fill me-1"></i> Admin/Mod Only</div>
+                }
+                <a asp-controller="MalAsses" asp-action="Index" class="btn btn-idf w-100 @(User.Identity.IsAuthenticated && !canAccessMapping ? "disabled" : "")">View All</a>
+            </div>
+        </div>
+    </div>
+
+    @* Optimization Section *@
+    <div class="row">
+        <div class="col-12">
+            <div class="action-card p-5 algo-card border-0 @(User.Identity.IsAuthenticated && !User.IsInRole("Admin") ? "opacity-75" : "")">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <div class="icon-box"><i class="bi bi-lightning-charge-fill"></i></div>
+                        <h2 class="fw-bold text-info">Batch Optimization Algorithm</h2>
+                        <p class="opacity-75">Automatically fills units based on Dapar, Profile, and Abilities while preserving manual assignments.</p>
+
+                        @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+                        {
+                            <div class="badge bg-warning text-dark mb-3"><i class="bi bi-lock-fill me-1"></i> Administrator Role Required to Run</div>
+                        }
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <form asp-controller="MalAsses" asp-action="RunAutoAssignment" method="post">
+                            <button type="submit" class="btn btn-info btn-lg px-5 rounded-pill fw-bold"
+                                    @(User.Identity.IsAuthenticated && !User.IsInRole("Admin") ? "disabled" : "")>
+                                RUN NOW
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
