@@ -104,11 +104,16 @@
                 </td>
                 <td>
                     <form asp-action="ToggleBlock" method="post">
-                        <input type="hidden" name="malshabId" value="@Model.Id" />
-                        <input type="hidden" name="assignmentId" value="@item.Id" />
-                        <button type="submit" class="btn btn-sm @(isBlocked ? "btn-outline-success" : "btn-outline-danger")">
-                            @(isBlocked ? "Unblock" : "Block")
-                        </button>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        @if (Model.IsBlocked)
+                        {
+                            <button type="submit" class="btn btn-warning">ביטול חסימה</button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-danger">חסימת מלש"ב</button>
+                        }
                     </form>
                 </td>
             </tr>
