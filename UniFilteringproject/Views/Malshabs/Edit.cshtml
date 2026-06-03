@@ -30,8 +30,9 @@
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsAssigned" /> @Html.DisplayNameFor(model => model.IsAssigned)
+                    <input class="form-check-input" asp-for="IsAssigned" disabled /> @Html.DisplayNameFor(model => model.IsAssigned)
                 </label>
+                <input type="hidden" asp-for="IsAssigned" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
