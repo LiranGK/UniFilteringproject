@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UniFilteringProject.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMig : Migration
+    public partial class YourMigrationName : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

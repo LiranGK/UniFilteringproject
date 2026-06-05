@@ -105,8 +105,9 @@
                 <td>
                     <form asp-action="ToggleBlock" method="post">
                         @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@Model.Id" />
-                        @if (Model.IsBlocked)
+                        <input type="hidden" name="id" value="@item.Id" />
+
+                        @if (isBlocked)
                         {
                             <button type="submit" class="btn btn-warning">ביטול חסימה</button>
                         }

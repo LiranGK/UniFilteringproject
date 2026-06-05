@@ -10,8 +10,7 @@ using UniFilteringproject.Data;
 using UniFilteringproject.Models;
 
 namespace UniFilteringproject.Controllers
-{
-    [Authorize(Roles = "Admin,DataInputer")]
+{    
     public class MalshabsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,7 +20,7 @@ namespace UniFilteringproject.Controllers
             _context = context;
         }
 
-        // GET: Malshabs
+        [Authorize(Roles = "Admin,DataInputer")]
         public async Task<IActionResult> Index()
         {
             // Fix: Added Include so the calculated property 'IsAssigned' works on the list page
@@ -30,13 +29,10 @@ namespace UniFilteringproject.Controllers
                 .ToListAsync());
         }
 
-        // GET: Malshabs/Details/5
+        [Authorize(Roles = "Admin,DataInputer,Moderator")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
-
-            // FIX: Added .Include(m => m.MalAssignedList) and .ThenInclude(ma => ma.Assignment)
-            // This allows the "IsAssigned" check and the unit name display to work.
             var malshab = await _context.Malshabs
                 .Include(m => m.MalAbis)
                     .ThenInclude(ma => ma.ability)
@@ -46,7 +42,6 @@ namespace UniFilteringproject.Controllers
 
             if (malshab == null) return NotFound();
 
-            // Load data for the blocking interface
             ViewBag.Assignments = await _context.Assignments.ToListAsync();
             ViewBag.BlockedAssignmentIds = await _context.MalBlocks
                 .Where(b => b.MalshabId == id)
@@ -58,6 +53,7 @@ namespace UniFilteringproject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,DataInputer")]
         public async Task<IActionResult> ToggleBlock(int malshabId, int assignmentId)
         {
             if (malshabId <= 0 || assignmentId <= 0) return BadRequest();
@@ -72,7 +68,7 @@ namespace UniFilteringproject.Controllers
             return RedirectToAction(nameof(Details), new { id = malshabId });
         }
 
-        // GET: Malshabs/Create
+        [Authorize(Roles = "Admin,DataInputer")]
         public IActionResult Create()
         {
             return View();
@@ -80,6 +76,7 @@ namespace UniFilteringproject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,DataInputer")]
         public async Task<IActionResult> Create([Bind("Id,Name,Dapar,Profile")] Malshab malshab)
         {
             if (ModelState.IsValid)
@@ -91,7 +88,7 @@ namespace UniFilteringproject.Controllers
             return View(malshab);
         }
 
-        // GET: Malshabs/Edit/5
+        [Authorize(Roles = "Admin,DataInputer")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -104,6 +101,7 @@ namespace UniFilteringproject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,DataInputer")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Dapar,Profile")] Malshab malshab)
         {
             if (id != malshab.Id) return NotFound();
@@ -125,7 +123,7 @@ namespace UniFilteringproject.Controllers
             return View(malshab);
         }
 
-        // GET: Malshabs/Viable/5
+        [Authorize(Roles = "Admin,DataInputer,Moderator")]
         [HttpGet("Malshabs/Viable/{id}")]
         public async Task<IActionResult> Viable(int id)
         {
@@ -157,12 +155,11 @@ namespace UniFilteringproject.Controllers
             return View(viableMalshabs);
         }
 
-        // GET: Malshabs/Delete/5
+        [Authorize(Roles = "Admin,DataInputer")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
 
-            // Fix: Include assignments here so the user knows what they are removing the Malshab from
             var malshab = await _context.Malshabs
                 .Include(m => m.MalAssignedList)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -174,6 +171,7 @@ namespace UniFilteringproject.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,DataInputer")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var malshab = await _context.Malshabs.FindAsync(id);

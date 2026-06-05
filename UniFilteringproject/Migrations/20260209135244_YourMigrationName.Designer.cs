@@ -12,8 +12,8 @@ using UniFilteringproject.Data;
 namespace UniFilteringProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260202112955_InitialMig")]
-    partial class InitialMig
+    [Migration("20260209135244_YourMigrationName")]
+    partial class YourMigrationName
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
