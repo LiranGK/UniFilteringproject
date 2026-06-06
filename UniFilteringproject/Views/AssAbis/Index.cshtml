@@ -38,7 +38,13 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                <a asp-controller="Assignments" asp-action="Details" asp-route-id="@item.AssignmentId" class="btn btn-sm btn-outline-primary">
+                    View Assignment
+                </a>
+                <a asp-controller="Abilities" asp-action="Details" asp-route-id="@item.AbilityId" class="btn btn-sm btn-outline-info">
+                    View Ability
+                </a>
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>

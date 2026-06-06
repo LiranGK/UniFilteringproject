@@ -11,7 +11,6 @@ using UniFilteringproject.Models;
 
 namespace UniFilteringproject.Controllers
 {
-    [Authorize(Roles = "Admin,Moderator")]
     public class AbilitiesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,12 +21,14 @@ namespace UniFilteringproject.Controllers
         }
 
         // GET: Abilities
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Abilities.ToListAsync());
         }
 
         // GET: Abilities/Details/5
+        [Authorize(Roles = "Admin,Moderator,DataInputer")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,6 +47,7 @@ namespace UniFilteringproject.Controllers
         }
 
         // GET: Abilities/Create
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +56,7 @@ namespace UniFilteringproject.Controllers
         // POST: Abilities/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Create([Bind("Id,Name,Description")] Ability ability)
         {
             if (ModelState.IsValid)
@@ -66,6 +69,7 @@ namespace UniFilteringproject.Controllers
         }
 
         // GET: Abilities/Edit/5
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -84,6 +88,7 @@ namespace UniFilteringproject.Controllers
         // POST: Abilities/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Ability ability)
         {
             if (id != ability.Id)
@@ -115,6 +120,7 @@ namespace UniFilteringproject.Controllers
         }
 
         // GET: Abilities/Delete/5
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -135,6 +141,7 @@ namespace UniFilteringproject.Controllers
         // POST: Abilities/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var ability = await _context.Abilities.FindAsync(id);

@@ -87,7 +87,7 @@
                         <a asp-controller="Assignments" asp-action="Details" asp-route-id="@item.AssignmentId" class="btn btn-sm btn-outline-primary">
                             View Assignment
                         </a>
-                        @if (isAdminOrRoie || isModerator || isDataInputer)
+                        @if (isAdminOrRoie || isModerator)
                         {
                             <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
                         }
